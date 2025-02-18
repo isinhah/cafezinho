@@ -47,11 +47,6 @@ public class User implements Serializable {
     @Column(name = "updated_date")
     private LocalDateTime updatedDate;
 
-    @Column(name = "created_by")
-    private String createdBy;
-    @Column(name = "modified_by")
-    private String modifiedBy;
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Address> addresses = new HashSet<>();
 
