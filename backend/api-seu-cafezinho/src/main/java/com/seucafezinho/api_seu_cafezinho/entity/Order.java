@@ -58,6 +58,10 @@ public class Order implements Serializable {
     @Column(nullable = false)
     private OrderStatus status;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "delivery_method", nullable = false)
+    private DeliveryMethod deliveryMethod;
+
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     private Payment payment;
 
@@ -79,6 +83,11 @@ public class Order implements Serializable {
         DELIVERING,
         COMPLETED,
         CANCELED;
+    }
+
+    public enum DeliveryMethod {
+        HOME,
+        ADDRESS
     }
 
     public void calculateTotalPrice() {
