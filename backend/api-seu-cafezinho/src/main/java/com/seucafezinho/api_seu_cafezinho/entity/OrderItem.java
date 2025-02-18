@@ -7,6 +7,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,12 +17,13 @@ import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Objects;
 
 @AllArgsConstructor @NoArgsConstructor @Getter @Setter
 @Entity
-@Table(name = "tb_addresses")
-public class Address implements Serializable {
+@Table(name = "tb_order_items")
+public class OrderItem implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -29,24 +32,34 @@ public class Address implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String street;
-
-    @Column(nullable = false)
-    private String number;
-
-    @Column(nullable = false)
-    private String neighborhood;
+    @Column(name = "unit_price", nullable = false, precision = 5, scale = 2)
+    private BigDecimal unitPrice;
+    @Column(name = "unit_quantity", nullable = false)
+    private Integer unitQuantity;
+    @Column(precision = 10, scale = 2)
+    private BigDecimal totalPrice;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "order_id", nullable = false)
+    private Order order;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
+
+    @PrePersist
+    @PreUpdate
+    public void calculateTotalPrice() {
+        if (unitPrice != null && unitQuantity != null) {
+            this.totalPrice = unitPrice.multiply(new BigDecimal(unitQuantity));
+        }
+    }
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        Address address = (Address) o;
-        return Objects.equals(id, address.id);
+        OrderItem orderItem = (OrderItem) o;
+        return Objects.equals(id, orderItem.id);
     }
 
     @Override
