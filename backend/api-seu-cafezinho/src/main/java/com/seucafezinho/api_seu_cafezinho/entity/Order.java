@@ -3,6 +3,8 @@ package com.seucafezinho.api_seu_cafezinho.entity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -38,8 +41,11 @@ public class Order implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @Column(nullable = false)
-    private String status;
+    @Column(name = "order_status", nullable = false)
+    private String orderStatus;
+    @Column(name = "payment_status", nullable = false)
+    private String paymentStatus;
+
     @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalPrice;
 
@@ -47,6 +53,13 @@ public class Order implements Serializable {
     private LocalDateTime createdDate;
     @Column(name = "updated_date")
     private LocalDateTime updatedDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private OrderStatus status;
+
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+    private Payment payment;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -58,6 +71,15 @@ public class Order implements Serializable {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderItem> orderItems;
+
+    public enum OrderStatus {
+        PENDING,
+        IN_PROGRESS,
+        READY_FOR_PICKUP,
+        DELIVERING,
+        COMPLETED,
+        CANCELED;
+    }
 
     public void calculateTotalPrice() {
         if (orderItems != null && !orderItems.isEmpty()) {
