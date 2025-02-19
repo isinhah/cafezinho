@@ -59,12 +59,8 @@ public class CategoryService {
 
         existingCategory.setName(updateDto.getName());
 
-        try {
-            Category updatedCategory = categoryRepository.save(existingCategory);
-            return CategoryMapper.INSTANCE.toDto(updatedCategory);
-        } catch (DataIntegrityViolationException ex) {
-            throw new RuntimeException(String.format("The name: '%s' already exists", updateDto.getName()));
-        }
+        Category updatedCategory = categoryRepository.save(existingCategory);
+        return CategoryMapper.INSTANCE.toDto(updatedCategory);
     }
 
     @Transactional
