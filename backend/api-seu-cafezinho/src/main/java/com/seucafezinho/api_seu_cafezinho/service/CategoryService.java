@@ -32,7 +32,7 @@ public class CategoryService {
 
     @Transactional(readOnly = true)
     public CategoryResponseDto findByName(String name) {
-        Category category = categoryRepository.findByName(name).orElseThrow(
+        Category category = categoryRepository.findByNameIgnoreCase(name).orElseThrow(
                 () -> new RuntimeException(String.format("Category with name: '%s' not found", name))
         );
         return CategoryMapper.INSTANCE.toDto(category);
@@ -40,21 +40,20 @@ public class CategoryService {
 
     @Transactional
     public CategoryResponseDto save(CategoryRequestDto createDto) {
-        Category categoryToSave = CategoryMapper.INSTANCE.toCategory(createDto);
-
-        try {
-            Category savedCategory = categoryRepository.save(categoryToSave);
-            return CategoryMapper.INSTANCE.toDto(savedCategory);
-        } catch (DataIntegrityViolationException ex) {
+        if (categoryRepository.existsByNameIgnoreCase(createDto.getName())) {
             throw new RuntimeException(String.format("The name: '%s' already exists", createDto.getName()));
         }
+
+        Category categoryToSave = CategoryMapper.INSTANCE.toCategory(createDto);
+        Category savedCategory = categoryRepository.save(categoryToSave);
+        return CategoryMapper.INSTANCE.toDto(savedCategory);
     }
 
     @Transactional
     public CategoryResponseDto update(Long id, CategoryRequestDto updateDto) {
         Category existingCategory = findCategoryById(id);
 
-        if (categoryRepository.existsByName(updateDto.getName())) {
+        if (categoryRepository.existsByNameIgnoreCase(updateDto.getName())) {
             throw new RuntimeException(String.format("The name: '%s' already exists", updateDto.getName()));
         }
 
