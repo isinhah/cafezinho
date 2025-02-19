@@ -1,10 +1,21 @@
 package com.seucafezinho.api_seu_cafezinho.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
+import org.hibernate.annotations.SQLDelete;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -12,6 +23,9 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+@SQLDelete(sql = "UPDATE tbl_categories SET active = false WHERE id=?")
+@FilterDef(name = "activeCategoryFilter", parameters = @ParamDef(name = "isActive", type = Boolean.class))
+@Filter(name = "activeCategoryFilter", condition = "active = :isActive")
 @AllArgsConstructor @NoArgsConstructor @Getter @Setter
 @Entity
 @Table(name = "tb_categories")

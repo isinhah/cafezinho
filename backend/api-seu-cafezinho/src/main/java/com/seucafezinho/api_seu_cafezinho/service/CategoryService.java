@@ -80,6 +80,19 @@ public class CategoryService {
         categoryRepository.save(category);
     }
 
+    @Transactional
+    public CategoryResponseDto reactivate(Long id) {
+        Category category = findCategoryById(id);
+
+        if (category.isActive()) {
+            throw new RuntimeException(String.format("Category with id: '%s' is already active", id));
+        }
+
+        category.setActive(true);
+        Category reactivatedCategory = categoryRepository.save(category);
+        return CategoryMapper.INSTANCE.toDto(reactivatedCategory);
+    }
+
     @Transactional(readOnly = true)
     private Category findCategoryById(Long id) {
         return categoryRepository.findById(id).orElseThrow(
