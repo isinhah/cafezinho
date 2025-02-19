@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -36,8 +37,8 @@ public class CategoryController {
         return categoryService.findAll(pageable);
     }
 
-    @GetMapping("/{name}")
-    public ResponseEntity<CategoryResponseDto> getByName(@PathVariable String name) {
+    @GetMapping("/search")
+    public ResponseEntity<CategoryResponseDto> getByName(@RequestParam String name) {
         CategoryResponseDto response = categoryService.findByName(name);
         return ResponseEntity.ok(response);
     }
