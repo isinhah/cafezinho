@@ -32,10 +32,8 @@ public class Address implements Serializable {
 
     @Column(nullable = false)
     private String street;
-
     @Column(nullable = false)
     private String number;
-
     @Column(nullable = false)
     private String neighborhood;
 
