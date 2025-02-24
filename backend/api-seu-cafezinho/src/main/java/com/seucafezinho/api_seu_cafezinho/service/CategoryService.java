@@ -5,7 +5,10 @@ import com.seucafezinho.api_seu_cafezinho.repository.CategoryRepository;
 import com.seucafezinho.api_seu_cafezinho.web.dto.CategoryRequestDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.CategoryResponseDto;
 import com.seucafezinho.api_seu_cafezinho.web.mapper.CategoryMapper;
+import com.seucafezinho.api_seu_cafezinho.web.mapper.UserMapper;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Session;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final EntityManager entityManager;
 
     @Transactional(readOnly = true)
     public CategoryResponseDto findById(Long id) {
@@ -53,11 +57,11 @@ public class CategoryService {
     public CategoryResponseDto update(Long id, CategoryRequestDto updateDto) {
         Category existingCategory = findCategoryById(id);
 
-        if (categoryRepository.existsByNameIgnoreCase(updateDto.getName())) {
+        if (categoryRepository.existsByNameIgnoreCaseAndIdNot(updateDto.getName(), id)) {
             throw new RuntimeException(String.format("The name: '%s' already exists", updateDto.getName()));
         }
 
-        existingCategory.setName(updateDto.getName());
+        CategoryMapper.INSTANCE.updateCategoryFromDto(updateDto, existingCategory);
 
         Category updatedCategory = categoryRepository.save(existingCategory);
         return CategoryMapper.INSTANCE.toDto(updatedCategory);
@@ -65,27 +69,8 @@ public class CategoryService {
 
     @Transactional
     public void delete(Long id) {
-        Category category = findCategoryById(id);
-
-        if (!category.isActive()) {
-            throw new RuntimeException(String.format("Category with id: %s is already inactive", id));
-        }
-
-        category.setActive(false);
-        categoryRepository.save(category);
-    }
-
-    @Transactional
-    public CategoryResponseDto reactivate(Long id) {
-        Category category = findCategoryById(id);
-
-        if (category.isActive()) {
-            throw new RuntimeException(String.format("Category with id: '%s' is already active", id));
-        }
-
-        category.setActive(true);
-        Category reactivatedCategory = categoryRepository.save(category);
-        return CategoryMapper.INSTANCE.toDto(reactivatedCategory);
+        findCategoryById(id);
+        categoryRepository.deleteById(id);
     }
 
     @Transactional(readOnly = true)

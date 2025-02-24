@@ -12,10 +12,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.FilterDef;
-import org.hibernate.annotations.ParamDef;
-import org.hibernate.annotations.SQLDelete;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -23,9 +19,6 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-@SQLDelete(sql = "UPDATE tbl_categories SET active = false WHERE id=?")
-@FilterDef(name = "activeCategoryFilter", parameters = @ParamDef(name = "isActive", type = Boolean.class))
-@Filter(name = "activeCategoryFilter", condition = "active = :isActive")
 @AllArgsConstructor @NoArgsConstructor @Getter @Setter
 @Entity
 @Table(name = "tb_categories")
@@ -35,14 +28,11 @@ public class Category implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(nullable = false, unique = true, length = 100)
     private String name;
-
-    @Column(name = "is_active", nullable = false)
-    private boolean active = true;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private Set<Product> products = new HashSet<>();

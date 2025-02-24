@@ -62,9 +62,4 @@ public class CategoryController {
         categoryService.delete(id);
         return ResponseEntity.noContent().build();
     }
-
-    @PutMapping("/{id}/reactivate")
-    public ResponseEntity<CategoryResponseDto> reactivate(@PathVariable Long id) {
-        return ResponseEntity.ok(categoryService.reactivate(id));
-    }
 }
