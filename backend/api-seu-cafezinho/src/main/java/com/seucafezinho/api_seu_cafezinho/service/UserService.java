@@ -33,10 +33,6 @@ public class UserService {
 
     @Transactional
     public UserResponseDto save(UserRequestDto createDto) {
-        if (userRepository.existsByEmailIgnoreCase(createDto.getEmail())) {
-            throw new RuntimeException(String.format("The email: '%s' already exists", createDto.getEmail()));
-        }
-
         User userToSave = UserMapper.INSTANCE.toUser(createDto);
         User savedUser = userRepository.save(userToSave);
         return UserMapper.INSTANCE.toDto(savedUser);
@@ -45,11 +41,6 @@ public class UserService {
     @Transactional
     public UserResponseDto update(UUID id, UserRequestDto updateDto) {
         User existingUser = findUserById(id);
-
-        if (!existingUser.getEmail().equalsIgnoreCase(updateDto.getEmail()) &&
-                userRepository.existsByEmailIgnoreCase(updateDto.getEmail())) {
-            throw new RuntimeException(String.format("The email: '%s' already exists", updateDto.getEmail()));
-        }
 
         UserMapper.INSTANCE.updateUserFromDto(updateDto, existingUser);
 
@@ -60,26 +51,7 @@ public class UserService {
     @Transactional
     public void delete(UUID id) {
         User user = findUserById(id);
-
-        if (!user.isActive()) {
-            throw new RuntimeException(String.format("User with id: %s is already inactive", id));
-        }
-
-        user.setActive(false);
-        userRepository.save(user);
-    }
-
-    @Transactional
-    public UserResponseDto reactivate(UUID id) {
-        User user = findUserById(id);
-
-        if (user.isActive()) {
-            throw new RuntimeException(String.format("User with id: '%s' is already active", id));
-        }
-
-        user.setActive(true);
-        User reactivatedUser = userRepository.save(user);
-        return UserMapper.INSTANCE.toDto(reactivatedUser);
+        userRepository.delete(user);
     }
 
     @Transactional(readOnly = true)

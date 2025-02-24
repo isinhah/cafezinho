@@ -16,7 +16,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.*;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -29,8 +28,6 @@ import java.util.UUID;
 @AllArgsConstructor @NoArgsConstructor @Getter @Setter
 @Entity
 @Table(name = "tb_users")
-@SQLDelete(sql = "UPDATE tb_users SET active = false WHERE id=?")
-@Where(clause = "is_active = true")
 public class User implements Serializable {
 
     @Serial
@@ -44,10 +41,6 @@ public class User implements Serializable {
     private String name;
     @Column(nullable = false, length = 16)
     private String phone;
-    @Column(nullable = false, unique = true, length = 100)
-    private String email;
-    @Column(nullable = false, length = 200)
-    private String password;
 
     @Column(name = "created_date", updatable = false)
     private LocalDateTime createdDate;
@@ -60,9 +53,6 @@ public class User implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 25)
     private Role role;
-
-    @Column(name = "is_active", nullable = false)
-    private boolean active = true;
 
     public enum Role {
         ROLE_ADMIN,

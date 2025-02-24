@@ -5,11 +5,8 @@ import com.seucafezinho.api_seu_cafezinho.repository.CategoryRepository;
 import com.seucafezinho.api_seu_cafezinho.web.dto.CategoryRequestDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.CategoryResponseDto;
 import com.seucafezinho.api_seu_cafezinho.web.mapper.CategoryMapper;
-import com.seucafezinho.api_seu_cafezinho.web.mapper.UserMapper;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Session;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -69,8 +66,8 @@ public class CategoryService {
 
     @Transactional
     public void delete(Long id) {
-        findCategoryById(id);
-        categoryRepository.deleteById(id);
+        Category category = findCategoryById(id);
+        categoryRepository.delete(category);
     }
 
     @Transactional(readOnly = true)

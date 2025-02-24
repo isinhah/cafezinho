@@ -26,15 +26,5 @@ public class UserRequestDto {
     )
     private String phone;
 
-    @NotBlank(message = "Email cannot be empty")
-    @Email(message = "Email format is invalid", regexp = "^[a-z0-9.+-_]+@[a-z0-9.-]+\\.[a-z]{2,}$"
-    )
-    @Size(min = 10, max = 100, message = "Email must be between 10 and 100 characters long")
-    private String email;
-
-    @NotBlank(message = "Password cannot be empty")
-    @Size(min = 6, max = 6, message = "Password must be exactly 6 characters long")
-    private String password;
-
     private String role;
 }

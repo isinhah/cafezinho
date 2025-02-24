@@ -57,9 +57,4 @@ public class UserController {
         userService.delete(id);
         return ResponseEntity.noContent().build();
     }
-
-    @PutMapping("/{id}/reactivate")
-    public ResponseEntity<UserResponseDto> reactivate(@PathVariable UUID id) {
-        return ResponseEntity.ok(userService.reactivate(id));
-    }
 }

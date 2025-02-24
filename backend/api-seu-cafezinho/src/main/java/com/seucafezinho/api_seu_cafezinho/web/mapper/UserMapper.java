@@ -17,12 +17,9 @@ public interface UserMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdDate", ignore = true)
     @Mapping(target = "updatedDate", ignore = true)
-    @Mapping(target = "active", ignore = true)
     @Mapping(target = "addresses", ignore = true)
     @Mapping(source = "name", target = "name")
     @Mapping(source = "phone" , target = "phone")
-    @Mapping(source = "email", target = "email")
-    @Mapping(source = "password", target = "password")
     @Mapping(source = "role", target = "role", qualifiedByName = "stringToRole")
     User toUser(UserRequestDto createDto);
 
@@ -32,7 +29,6 @@ public interface UserMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdDate", ignore = true)
     @Mapping(target = "updatedDate", ignore = true)
-    @Mapping(target = "active", ignore = true)
     @Mapping(target = "addresses", ignore = true)
     @Mapping(source = "role", target = "role", qualifiedByName = "stringToRole")
     void updateUserFromDto(UserRequestDto updateDto, @MappingTarget User user);
