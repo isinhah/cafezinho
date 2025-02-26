@@ -3,6 +3,7 @@ package com.seucafezinho.api_seu_cafezinho.service;
 import com.seucafezinho.api_seu_cafezinho.entity.Address;
 import com.seucafezinho.api_seu_cafezinho.entity.User;
 import com.seucafezinho.api_seu_cafezinho.repository.AddressRepository;
+import com.seucafezinho.api_seu_cafezinho.repository.UserRepository;
 import com.seucafezinho.api_seu_cafezinho.web.dto.AddressRequestDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.AddressResponseDto;
 import com.seucafezinho.api_seu_cafezinho.web.mapper.AddressMapper;
@@ -19,23 +20,35 @@ import java.util.UUID;
 public class AddressService {
 
     private final AddressRepository addressRepository;
+    private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    public AddressResponseDto findByIdAndUser(UUID addressId, User user) {
+    public AddressResponseDto findByIdAndUser(UUID addressId, UUID userId) {
+        User user = findUserById(userId);
         Address address = findAddressByIdAndUser(addressId, user);
         return AddressMapper.INSTANCE.toDto(address);
     }
 
     @Transactional(readOnly = true)
-    public Page<AddressResponseDto> findAllByUser(User user, Pageable pageable) {
+    public Page<AddressResponseDto> findAllByUser(UUID userId, Pageable pageable) {
+        User user = findUserById(userId);
         return addressRepository.findAllByUser(user, pageable)
                 .map(AddressMapper.INSTANCE::toDto);
     }
 
-    // create
+    @Transactional
+    public AddressResponseDto create(AddressRequestDto createDto, UUID userId) {
+        User user = findUserById(userId);
+
+        Address address = AddressMapper.INSTANCE.toEntity(createDto, user);
+
+        Address savedAddress = addressRepository.save(address);
+        return AddressMapper.INSTANCE.toDto(savedAddress);
+    }
 
     @Transactional
-    public AddressResponseDto update(UUID addressId, AddressRequestDto updateDto, User user) {
+    public AddressResponseDto update(UUID addressId, AddressRequestDto updateDto, UUID userId) {
+        User user = findUserById(userId);
         Address existingAddress = findAddressByIdAndUser(addressId, user);
 
         if (addressRepository.existsByUserAndStreetIgnoreCase(user, updateDto.getStreet())
@@ -49,7 +62,8 @@ public class AddressService {
     }
 
     @Transactional
-    public void delete(UUID addressId, User user) {
+    public void delete(UUID addressId, UUID userId) {
+        User user = findUserById(userId);
         Address address = findAddressByIdAndUser(addressId, user);
         addressRepository.delete(address);
     }
@@ -59,6 +73,14 @@ public class AddressService {
         return addressRepository.findByIdAndUser(addressId, user)
                 .orElseThrow(() -> new RuntimeException(
                         String.format("Address with id: '%s' not found for user: '%s'", addressId, user.getId())
+                ));
+    }
+
+    @Transactional(readOnly = true)
+    private User findUserById(UUID userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException(
+                        String.format("User with id: '%s' not found", userId)
                 ));
     }
 }
