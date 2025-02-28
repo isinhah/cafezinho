@@ -40,8 +40,8 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserResponseDto> create(@Valid @RequestBody UserRequestDto createDto) {
-        UserResponseDto newUserResponse = userService.save(createDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newUserResponse);
+        UserResponseDto newUser = userService.save(createDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
     }
 
     @PutMapping("/{id}")

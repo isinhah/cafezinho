@@ -27,14 +27,6 @@ public class AddressController {
 
     private final AddressService addressService;
 
-    @GetMapping
-    public ResponseEntity<Page<AddressResponseDto>> getAllByUser(
-            @PathVariable UUID userId,
-            Pageable pageable) {
-        Page<AddressResponseDto> addresses = addressService.findAllByUser(userId, pageable);
-        return ResponseEntity.ok(addresses);
-    }
-
     @GetMapping("/{addressId}")
     public ResponseEntity<AddressResponseDto> getByIdAndUser(
             @PathVariable UUID userId,
@@ -43,21 +35,29 @@ public class AddressController {
         return ResponseEntity.ok(address);
     }
 
+    @GetMapping
+    public ResponseEntity<Page<AddressResponseDto>> getAllByUser(
+            @PathVariable UUID userId,
+            Pageable pageable) {
+        Page<AddressResponseDto> addresses = addressService.findAllByUser(userId, pageable);
+        return ResponseEntity.ok(addresses);
+    }
+
     @PostMapping
     public ResponseEntity<AddressResponseDto> create(
             @PathVariable UUID userId,
-            @Valid @RequestBody AddressRequestDto addressRequestDto) {
-        AddressResponseDto createdAddress = addressService.create(addressRequestDto, userId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdAddress);
+            @Valid @RequestBody AddressRequestDto createDto) {
+        AddressResponseDto newAddress = addressService.create(createDto, userId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newAddress);
     }
 
     @PutMapping("/{addressId}")
     public ResponseEntity<AddressResponseDto> update(
             @PathVariable UUID userId,
             @PathVariable UUID addressId,
-            @Valid @RequestBody AddressRequestDto addressRequestDto) {
-        AddressResponseDto updatedAddress = addressService.update(addressId, addressRequestDto, userId);
-        return ResponseEntity.ok(updatedAddress);
+            @Valid @RequestBody AddressRequestDto updateDto) {
+        AddressResponseDto existingAddress = addressService.update(userId, addressId, updateDto);
+        return ResponseEntity.ok(existingAddress);
     }
 
     @DeleteMapping("/{addressId}")

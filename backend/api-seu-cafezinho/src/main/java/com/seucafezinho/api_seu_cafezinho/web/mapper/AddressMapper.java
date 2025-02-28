@@ -16,6 +16,9 @@ public interface AddressMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "user", ignore = true)
+    @Mapping(source = "street", target = "street")
+    @Mapping(source = "number" , target = "number")
+    @Mapping(source = "neighborhood" , target = "neighborhood")
     Address toAddress(AddressRequestDto createDto);
 
     AddressResponseDto toDto(Address address);

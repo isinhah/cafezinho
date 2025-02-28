@@ -23,7 +23,7 @@ public class AddressService {
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    public AddressResponseDto findByIdAndUser(UUID addressId, UUID userId) {
+    public AddressResponseDto findByIdAndUser(UUID userId, UUID addressId) {
         User user = findUserById(userId);
         Address address = findAddressByIdAndUser(addressId, user);
         return AddressMapper.INSTANCE.toDto(address);
@@ -39,15 +39,13 @@ public class AddressService {
     @Transactional
     public AddressResponseDto create(AddressRequestDto createDto, UUID userId) {
         User user = findUserById(userId);
-
         Address address = AddressMapper.INSTANCE.toEntity(createDto, user);
-
         Address savedAddress = addressRepository.save(address);
         return AddressMapper.INSTANCE.toDto(savedAddress);
     }
 
     @Transactional
-    public AddressResponseDto update(UUID addressId, AddressRequestDto updateDto, UUID userId) {
+    public AddressResponseDto update(UUID userId, UUID addressId, AddressRequestDto updateDto) {
         User user = findUserById(userId);
         Address existingAddress = findAddressByIdAndUser(addressId, user);
 
@@ -62,7 +60,7 @@ public class AddressService {
     }
 
     @Transactional
-    public void delete(UUID addressId, UUID userId) {
+    public void delete(UUID userId, UUID addressId) {
         User user = findUserById(userId);
         Address address = findAddressByIdAndUser(addressId, user);
         addressRepository.delete(address);
