@@ -28,24 +28,24 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponseDto> getById(@PathVariable UUID id) {
+    public ResponseEntity<UserResponseDto> getUserById(@PathVariable UUID id) {
         UserResponseDto response = userService.findById(id);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping
-    public Page<UserResponseDto> getAll(Pageable pageable) {
+    public Page<UserResponseDto> getAllUsers(Pageable pageable) {
         return userService.findAll(pageable);
     }
 
     @PostMapping
-    public ResponseEntity<UserResponseDto> create(@Valid @RequestBody UserRequestDto createDto) {
+    public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserRequestDto createDto) {
         UserResponseDto newUser = userService.save(createDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponseDto> alter(
+    public ResponseEntity<UserResponseDto> alterUser(
             @PathVariable UUID id,
             @Valid @RequestBody UserRequestDto updateDto) {
         UserResponseDto existingUser = userService.update(id, updateDto);
@@ -53,7 +53,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
         userService.delete(id);
         return ResponseEntity.noContent().build();
     }

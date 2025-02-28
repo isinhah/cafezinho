@@ -28,7 +28,7 @@ public class AddressController {
     private final AddressService addressService;
 
     @GetMapping("/{addressId}")
-    public ResponseEntity<AddressResponseDto> getByIdAndUser(
+    public ResponseEntity<AddressResponseDto> getAddressById(
             @PathVariable UUID userId,
             @PathVariable UUID addressId) {
         AddressResponseDto address = addressService.findByIdAndUser(addressId, userId);
@@ -36,7 +36,7 @@ public class AddressController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<AddressResponseDto>> getAllByUser(
+    public ResponseEntity<Page<AddressResponseDto>> getAddressesByUser(
             @PathVariable UUID userId,
             Pageable pageable) {
         Page<AddressResponseDto> addresses = addressService.findAllByUser(userId, pageable);
@@ -44,7 +44,7 @@ public class AddressController {
     }
 
     @PostMapping
-    public ResponseEntity<AddressResponseDto> create(
+    public ResponseEntity<AddressResponseDto> createAddress(
             @PathVariable UUID userId,
             @Valid @RequestBody AddressRequestDto createDto) {
         AddressResponseDto newAddress = addressService.create(createDto, userId);
@@ -52,7 +52,7 @@ public class AddressController {
     }
 
     @PutMapping("/{addressId}")
-    public ResponseEntity<AddressResponseDto> update(
+    public ResponseEntity<AddressResponseDto> updateAddress(
             @PathVariable UUID userId,
             @PathVariable UUID addressId,
             @Valid @RequestBody AddressRequestDto updateDto) {
@@ -61,7 +61,7 @@ public class AddressController {
     }
 
     @DeleteMapping("/{addressId}")
-    public ResponseEntity<Void> delete(
+    public ResponseEntity<Void> deleteAddress(
             @PathVariable UUID userId,
             @PathVariable UUID addressId) {
         addressService.delete(addressId, userId);

@@ -26,7 +26,7 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping("/{productId}")
-    public ResponseEntity<ProductResponseDto> getByIdAndCategory(
+    public ResponseEntity<ProductResponseDto> getProductById(
             @PathVariable Long categoryId,
             @PathVariable Long productId) {
         ProductResponseDto product = productService.findByIdAndCategory(productId, categoryId);
@@ -34,7 +34,7 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ProductResponseDto>> getAllByCategory(
+    public ResponseEntity<Page<ProductResponseDto>> getProductsByCategory(
             @PathVariable Long categoryId,
             Pageable pageable) {
         Page<ProductResponseDto> products = productService.findAllByCategory(categoryId, pageable);
@@ -42,7 +42,7 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<ProductResponseDto> create(
+    public ResponseEntity<ProductResponseDto> createProduct(
             @PathVariable Long categoryId,
             @Valid @RequestBody ProductRequestDto createDto) {
         ProductResponseDto newProduct = productService.create(createDto, categoryId);
@@ -50,7 +50,7 @@ public class ProductController {
     }
 
     @PutMapping("/{productId}")
-    public ResponseEntity<ProductResponseDto> update(
+    public ResponseEntity<ProductResponseDto> updateProduct(
             @PathVariable Long categoryId,
             @PathVariable Long productId,
             @Valid @RequestBody ProductRequestDto updateDto) {
@@ -59,7 +59,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{productId}")
-    public ResponseEntity<Void> delete(
+    public ResponseEntity<Void> deleteProduct(
             @PathVariable Long categoryId,
             @PathVariable Long productId) {
         productService.delete(productId, categoryId);

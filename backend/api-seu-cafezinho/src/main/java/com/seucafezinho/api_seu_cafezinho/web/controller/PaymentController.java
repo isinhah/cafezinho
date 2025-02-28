@@ -21,7 +21,7 @@ public class PaymentController {
     private final PaymentService paymentService;
 
     @GetMapping("/{paymentId}")
-    public ResponseEntity<PaymentResponseDto> getPayment(
+    public ResponseEntity<PaymentResponseDto> getPaymentById(
             @PathVariable UUID orderId,
             @PathVariable UUID paymentId) {
         PaymentResponseDto payment = paymentService.findByIdAndOrder(orderId, paymentId);
