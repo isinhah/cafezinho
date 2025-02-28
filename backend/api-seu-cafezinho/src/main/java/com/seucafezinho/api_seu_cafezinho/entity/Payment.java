@@ -1,5 +1,6 @@
 package com.seucafezinho.api_seu_cafezinho.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -47,6 +48,7 @@ public class Payment implements Serializable {
     private BigDecimal amount;
 
     @Column(name = "payment_date", updatable = false)
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime paymentDate;
 
     @OneToOne

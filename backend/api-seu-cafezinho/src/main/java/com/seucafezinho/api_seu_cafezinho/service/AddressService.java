@@ -55,6 +55,7 @@ public class AddressService {
         }
 
         AddressMapper.INSTANCE.updateAddressFromDto(updateDto, existingAddress);
+
         Address updatedAddress = addressRepository.save(existingAddress);
         return AddressMapper.INSTANCE.toDto(updatedAddress);
     }
