@@ -6,7 +6,9 @@ import com.seucafezinho.api_seu_cafezinho.repository.CategoryRepository;
 import com.seucafezinho.api_seu_cafezinho.repository.ProductRepository;
 import com.seucafezinho.api_seu_cafezinho.web.dto.ProductRequestDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.ProductResponseDto;
+import com.seucafezinho.api_seu_cafezinho.web.exception.UniqueViolationException;
 import com.seucafezinho.api_seu_cafezinho.web.mapper.ProductMapper;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -49,7 +51,7 @@ public class ProductService {
 
         if (productRepository.existsByCategoryAndNameIgnoreCase(category, updateDto.getName())
                 && !existingProduct.getName().equalsIgnoreCase(updateDto.getName())) {
-            throw new RuntimeException(String.format("Another product with the name: '%s' already exists for this category", updateDto.getName()));
+            throw new UniqueViolationException(String.format("Another product with the name: '%s' already exists for this category", updateDto.getName()));
         }
 
         ProductMapper.INSTANCE.updateProductFromDto(updateDto, existingProduct);
@@ -67,7 +69,7 @@ public class ProductService {
     @Transactional(readOnly = true)
     private Product findProductByIdAndCategory(Long productId, Category category) {
         return productRepository.findByIdAndCategory(productId, category)
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Product with id: '%s' not found for category: '%s'", productId, category.getId())
                 ));
     }
@@ -75,7 +77,7 @@ public class ProductService {
     @Transactional(readOnly = true)
     private Category findCategoryById(Long categoryId) {
         return categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Category with id: '%s' not found", categoryId)
                 ));
     }

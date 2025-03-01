@@ -7,6 +7,7 @@ import com.seucafezinho.api_seu_cafezinho.repository.PaymentRepository;
 import com.seucafezinho.api_seu_cafezinho.web.dto.PaymentRequestDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.PaymentResponseDto;
 import com.seucafezinho.api_seu_cafezinho.web.mapper.PaymentMapper;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,6 +46,7 @@ public class PaymentService {
     @Transactional
     public PaymentResponseDto create(PaymentRequestDto createDto, UUID orderId) {
         Order order = findOrderById(orderId);
+
         Payment payment = PaymentMapper.INSTANCE.toEntity(createDto, order);
         Payment savedPayment = paymentRepository.save(payment);
         return PaymentMapper.INSTANCE.toDto(savedPayment);
@@ -71,7 +73,7 @@ public class PaymentService {
     @Transactional(readOnly = true)
     private Payment findPaymentByIdAndOrder(UUID paymentId, Order order) {
         return paymentRepository.findByIdAndOrder(paymentId, order)
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Payment with id: '%s' not found for order: '%s'", paymentId, order.getId())
                 ));
     }
@@ -79,6 +81,6 @@ public class PaymentService {
     @Transactional(readOnly = true)
     private Order findOrderById(UUID orderId) {
         return orderRepository.findById(orderId).orElseThrow(
-                () -> new RuntimeException(String.format("Order with id: '%s' not found", orderId)));
+                () -> new EntityNotFoundException(String.format("Order with id: '%s' not found", orderId)));
     }
 }

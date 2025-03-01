@@ -4,8 +4,10 @@ import com.seucafezinho.api_seu_cafezinho.entity.Category;
 import com.seucafezinho.api_seu_cafezinho.repository.CategoryRepository;
 import com.seucafezinho.api_seu_cafezinho.web.dto.CategoryRequestDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.CategoryResponseDto;
+import com.seucafezinho.api_seu_cafezinho.web.exception.UniqueViolationException;
 import com.seucafezinho.api_seu_cafezinho.web.mapper.CategoryMapper;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,7 +36,7 @@ public class CategoryService {
     @Transactional(readOnly = true)
     public CategoryResponseDto findByName(String name) {
         Category category = categoryRepository.findByNameIgnoreCase(name).orElseThrow(
-                () -> new RuntimeException(String.format("Category with name: '%s' not found", name))
+                () -> new UniqueViolationException(String.format("Category with name: '%s' not found", name))
         );
         return CategoryMapper.INSTANCE.toDto(category);
     }
@@ -42,7 +44,7 @@ public class CategoryService {
     @Transactional
     public CategoryResponseDto save(CategoryRequestDto createDto) {
         if (categoryRepository.existsByNameIgnoreCase(createDto.getName())) {
-            throw new RuntimeException(String.format("The name: '%s' already exists", createDto.getName()));
+            throw new UniqueViolationException(String.format("The name: '%s' already exists", createDto.getName()));
         }
 
         Category categoryToSave = CategoryMapper.INSTANCE.toCategory(createDto);
@@ -55,7 +57,7 @@ public class CategoryService {
         Category existingCategory = findCategoryById(id);
 
         if (categoryRepository.existsByNameIgnoreCaseAndIdNot(updateDto.getName(), id)) {
-            throw new RuntimeException(String.format("The name: '%s' already exists", updateDto.getName()));
+            throw new UniqueViolationException(String.format("The name: '%s' already exists", updateDto.getName()));
         }
 
         CategoryMapper.INSTANCE.updateCategoryFromDto(updateDto, existingCategory);
@@ -73,6 +75,6 @@ public class CategoryService {
     @Transactional(readOnly = true)
     private Category findCategoryById(Long id) {
         return categoryRepository.findById(id).orElseThrow(
-                () -> new RuntimeException(String.format("Category with id: '%s' not found", id)));
+                () -> new EntityNotFoundException(String.format("Category with id: '%s' not found", id)));
     }
 }

@@ -42,20 +42,8 @@ public class Order implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @Column(name = "order_status", nullable = false)
-    private String orderStatus;
-    @Column(name = "payment_status", nullable = false)
-    private String paymentStatus;
-
     @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalPrice;
-
-    @Column(name = "created_date", updatable = false)
-    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
-    private LocalDateTime createdDate;
-    @Column(name = "updated_date")
-    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
-    private LocalDateTime updatedDate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -64,6 +52,13 @@ public class Order implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(name = "delivery_method", nullable = false)
     private DeliveryMethod deliveryMethod;
+
+    @Column(name = "created_date", updatable = false)
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
+    private LocalDateTime createdDate;
+    @Column(name = "updated_date")
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
+    private LocalDateTime updatedDate;
 
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     private Payment payment;
@@ -82,15 +77,15 @@ public class Order implements Serializable {
     public enum OrderStatus {
         PENDING,
         IN_PROGRESS,
-        READY_FOR_PICKUP,
-        DELIVERING,
+        DELIVERING, // apenas entrega (dm = HOME_DELIVERY)
+        READY_FOR_PICKUP, // apenas retirada (dm = PICKUP)
         COMPLETED,
         CANCELED;
     }
 
     public enum DeliveryMethod {
-        HOME,
-        ADDRESS
+        HOME_DELIVERY,
+        PICKUP
     }
 
     public void calculateTotalPrice() {

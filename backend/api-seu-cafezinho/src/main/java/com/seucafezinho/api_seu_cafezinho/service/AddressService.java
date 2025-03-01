@@ -6,7 +6,9 @@ import com.seucafezinho.api_seu_cafezinho.repository.AddressRepository;
 import com.seucafezinho.api_seu_cafezinho.repository.UserRepository;
 import com.seucafezinho.api_seu_cafezinho.web.dto.AddressRequestDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.AddressResponseDto;
+import com.seucafezinho.api_seu_cafezinho.web.exception.UniqueViolationException;
 import com.seucafezinho.api_seu_cafezinho.web.mapper.AddressMapper;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -51,7 +53,7 @@ public class AddressService {
 
         if (addressRepository.existsByUserAndStreetIgnoreCase(user, updateDto.getStreet())
                 && !existingAddress.getStreet().equalsIgnoreCase(updateDto.getStreet())) {
-            throw new RuntimeException(String.format("Another address with the street name: '%s' already exists for this user", updateDto.getStreet()));
+            throw new UniqueViolationException(String.format("Another address with the street name: '%s' already exists for this user", updateDto.getStreet()));
         }
 
         AddressMapper.INSTANCE.updateAddressFromDto(updateDto, existingAddress);
@@ -70,7 +72,7 @@ public class AddressService {
     @Transactional(readOnly = true)
     private Address findAddressByIdAndUser(UUID addressId, User user) {
         return addressRepository.findByIdAndUser(addressId, user)
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Address with id: '%s' not found for user: '%s'", addressId, user.getId())
                 ));
     }
@@ -78,7 +80,7 @@ public class AddressService {
     @Transactional(readOnly = true)
     private User findUserById(UUID userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new EntityNotFoundException(
                         String.format("User with id: '%s' not found", userId)
                 ));
     }

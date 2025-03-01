@@ -5,6 +5,7 @@ import com.seucafezinho.api_seu_cafezinho.repository.UserRepository;
 import com.seucafezinho.api_seu_cafezinho.web.dto.UserRequestDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.UserResponseDto;
 import com.seucafezinho.api_seu_cafezinho.web.mapper.UserMapper;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -57,6 +58,6 @@ public class UserService {
     @Transactional(readOnly = true)
     private User findUserById(UUID id) {
         return userRepository.findById(id).orElseThrow(
-                () -> new RuntimeException(String.format("User with id: '%s' not found", id)));
+                () -> new EntityNotFoundException(String.format("User with id: '%s' not found", id)));
     }
 }

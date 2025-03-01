@@ -15,25 +15,25 @@ public interface PaymentMapper {
     PaymentMapper INSTANCE = Mappers.getMapper(PaymentMapper.class);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "order", ignore = true)
     @Mapping(target = "createdDate", ignore = true)
     @Mapping(target = "updatedDate", ignore = true)
-    @Mapping(source = "orderId", target = "order.id")
     @Mapping(source = "paymentType", target = "paymentType")
     @Mapping(source = "paymentStatus", target = "paymentStatus")
     @Mapping(source = "amount", target = "amount")
-    Payment toPayment(PaymentRequestDto paymentRequestDto);
+    Payment toPayment(PaymentRequestDto createDto);
 
     @Mapping(source = "order.id", target = "orderId")
     PaymentResponseDto toDto(Payment payment);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "order", ignore = true)
     @Mapping(target = "createdDate", ignore = true)
     @Mapping(target = "updatedDate", ignore = true)
-    @Mapping(source = "orderId", target = "order.id")
-    void updatePaymentFromDto(PaymentRequestDto paymentRequestDto, @MappingTarget Payment payment);
+    void updatePaymentFromDto(PaymentRequestDto updateDto, @MappingTarget Payment payment);
 
-    default Payment toEntity(PaymentRequestDto paymentRequestDto, Order order) {
-        Payment payment = toPayment(paymentRequestDto);
+    default Payment toEntity(PaymentRequestDto dto, Order order) {
+        Payment payment = toPayment(dto);
         payment.setOrder(order);
         return payment;
     }
