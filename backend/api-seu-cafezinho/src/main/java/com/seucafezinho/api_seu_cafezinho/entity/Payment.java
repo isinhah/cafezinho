@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -47,9 +48,12 @@ public class Payment implements Serializable {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
 
-    @Column(name = "payment_date", updatable = false)
+    @Column(name = "created_date", updatable = false)
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
-    private LocalDateTime paymentDate;
+    private LocalDateTime createdDate;
+    @Column(name = "updated_date")
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
+    private LocalDateTime updatedDate;
 
     @OneToOne
     @JoinColumn(name = "order_id", nullable = false)
@@ -67,8 +71,13 @@ public class Payment implements Serializable {
     }
 
     @PrePersist
-    private void prePersist() {
-        this.paymentDate = LocalDateTime.now();
+    private void PrePersist() {
+        this.createdDate = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    private void preUpdate() {
+        this.updatedDate = LocalDateTime.now();
     }
 
     @Override

@@ -21,5 +21,4 @@ public class PaymentResponseDto {
     private Payment.PaymentType paymentType;
     private Payment.PaymentStatus paymentStatus;
     private BigDecimal amount;
-    private LocalDateTime paymentDate;
 }
