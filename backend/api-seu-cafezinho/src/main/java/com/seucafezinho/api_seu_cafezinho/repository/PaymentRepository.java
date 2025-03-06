@@ -17,4 +17,6 @@ public interface PaymentRepository extends JpaRepository<Payment, UUID> {
     Page<Payment> findAllByOrder(Order order, Pageable pageable);
 
     Page<Payment> findAllByPaymentStatus(Payment.PaymentStatus paymentStatus, Pageable pageable);
+
+    Optional<Payment> findByOrderId(UUID orderId);
 }

@@ -2,8 +2,8 @@ package com.seucafezinho.api_seu_cafezinho.web.mapper;
 
 import com.seucafezinho.api_seu_cafezinho.entity.Category;
 import com.seucafezinho.api_seu_cafezinho.entity.Product;
-import com.seucafezinho.api_seu_cafezinho.web.dto.ProductRequestDto;
-import com.seucafezinho.api_seu_cafezinho.web.dto.ProductResponseDto;
+import com.seucafezinho.api_seu_cafezinho.web.dto.request.ProductRequestDto;
+import com.seucafezinho.api_seu_cafezinho.web.dto.response.ProductResponseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;

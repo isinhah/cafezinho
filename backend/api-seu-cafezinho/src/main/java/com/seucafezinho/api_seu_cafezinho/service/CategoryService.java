@@ -2,8 +2,8 @@ package com.seucafezinho.api_seu_cafezinho.service;
 
 import com.seucafezinho.api_seu_cafezinho.entity.Category;
 import com.seucafezinho.api_seu_cafezinho.repository.CategoryRepository;
-import com.seucafezinho.api_seu_cafezinho.web.dto.CategoryRequestDto;
-import com.seucafezinho.api_seu_cafezinho.web.dto.CategoryResponseDto;
+import com.seucafezinho.api_seu_cafezinho.web.dto.request.CategoryRequestDto;
+import com.seucafezinho.api_seu_cafezinho.web.dto.response.CategoryResponseDto;
 import com.seucafezinho.api_seu_cafezinho.web.exception.UniqueViolationException;
 import com.seucafezinho.api_seu_cafezinho.web.mapper.CategoryMapper;
 import jakarta.persistence.EntityManager;

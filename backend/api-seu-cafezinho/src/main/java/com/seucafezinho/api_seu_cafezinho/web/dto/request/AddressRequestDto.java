@@ -1,4 +1,4 @@
-package com.seucafezinho.api_seu_cafezinho.web.dto;
+package com.seucafezinho.api_seu_cafezinho.web.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

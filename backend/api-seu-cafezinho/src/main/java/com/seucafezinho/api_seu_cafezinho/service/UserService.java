@@ -2,8 +2,8 @@ package com.seucafezinho.api_seu_cafezinho.service;
 
 import com.seucafezinho.api_seu_cafezinho.entity.User;
 import com.seucafezinho.api_seu_cafezinho.repository.UserRepository;
-import com.seucafezinho.api_seu_cafezinho.web.dto.UserRequestDto;
-import com.seucafezinho.api_seu_cafezinho.web.dto.UserResponseDto;
+import com.seucafezinho.api_seu_cafezinho.web.dto.request.UserRequestDto;
+import com.seucafezinho.api_seu_cafezinho.web.dto.response.UserResponseDto;
 import com.seucafezinho.api_seu_cafezinho.web.mapper.UserMapper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;

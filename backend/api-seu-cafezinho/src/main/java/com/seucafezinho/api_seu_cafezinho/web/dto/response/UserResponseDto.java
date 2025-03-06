@@ -1,4 +1,4 @@
-package com.seucafezinho.api_seu_cafezinho.web.dto;
+package com.seucafezinho.api_seu_cafezinho.web.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,10 +11,10 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddressResponseDto {
+public class UserResponseDto {
 
     private UUID id;
-    private String street;
-    private String number;
-    private String neighborhood;
+    private String name;
+    private String phone;
+    private String role;
 }

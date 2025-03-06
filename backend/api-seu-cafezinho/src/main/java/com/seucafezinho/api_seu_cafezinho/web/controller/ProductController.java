@@ -1,8 +1,8 @@
 package com.seucafezinho.api_seu_cafezinho.web.controller;
 
 import com.seucafezinho.api_seu_cafezinho.service.ProductService;
-import com.seucafezinho.api_seu_cafezinho.web.dto.ProductRequestDto;
-import com.seucafezinho.api_seu_cafezinho.web.dto.ProductResponseDto;
+import com.seucafezinho.api_seu_cafezinho.web.dto.request.ProductRequestDto;
+import com.seucafezinho.api_seu_cafezinho.web.dto.response.ProductResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

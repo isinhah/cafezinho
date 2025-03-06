@@ -18,4 +18,6 @@ public interface AddressRepository extends JpaRepository<Address, UUID> {
     Page<Address> findAllByUser(User user, Pageable pageable);
 
     boolean existsByUserAndStreetIgnoreCase(User user, String street);
+
+    Optional<Address> findByUserId(UUID userId);
 }

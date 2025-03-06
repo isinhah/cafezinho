@@ -77,8 +77,8 @@ public class Order implements Serializable {
     public enum OrderStatus {
         PENDING,
         IN_PROGRESS,
-        DELIVERING, // apenas entrega (dm = HOME_DELIVERY)
-        READY_FOR_PICKUP, // apenas retirada (dm = PICKUP)
+        DELIVERING,
+        READY_FOR_PICKUP,
         COMPLETED,
         CANCELED;
     }

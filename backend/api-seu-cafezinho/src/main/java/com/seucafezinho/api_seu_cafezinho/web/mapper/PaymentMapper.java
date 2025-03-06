@@ -2,8 +2,8 @@ package com.seucafezinho.api_seu_cafezinho.web.mapper;
 
 import com.seucafezinho.api_seu_cafezinho.entity.Order;
 import com.seucafezinho.api_seu_cafezinho.entity.Payment;
-import com.seucafezinho.api_seu_cafezinho.web.dto.PaymentRequestDto;
-import com.seucafezinho.api_seu_cafezinho.web.dto.PaymentResponseDto;
+import com.seucafezinho.api_seu_cafezinho.web.dto.request.PaymentRequestDto;
+import com.seucafezinho.api_seu_cafezinho.web.dto.response.PaymentResponseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;

@@ -1,4 +1,4 @@
-package com.seucafezinho.api_seu_cafezinho.web.dto;
+package com.seucafezinho.api_seu_cafezinho.web.dto.request;
 
 import com.seucafezinho.api_seu_cafezinho.entity.Payment;
 import jakarta.validation.constraints.NotNull;

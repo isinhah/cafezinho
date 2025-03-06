@@ -1,4 +1,4 @@
-package com.seucafezinho.api_seu_cafezinho.web.dto;
+package com.seucafezinho.api_seu_cafezinho.web.dto.response;
 
 import com.seucafezinho.api_seu_cafezinho.entity.Payment;
 import lombok.AllArgsConstructor;
@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter

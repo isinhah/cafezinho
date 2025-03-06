@@ -2,8 +2,8 @@ package com.seucafezinho.api_seu_cafezinho.web.controller;
 
 import com.seucafezinho.api_seu_cafezinho.entity.Payment;
 import com.seucafezinho.api_seu_cafezinho.service.PaymentService;
-import com.seucafezinho.api_seu_cafezinho.web.dto.PaymentRequestDto;
-import com.seucafezinho.api_seu_cafezinho.web.dto.PaymentResponseDto;
+import com.seucafezinho.api_seu_cafezinho.web.dto.request.PaymentRequestDto;
+import com.seucafezinho.api_seu_cafezinho.web.dto.response.PaymentResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

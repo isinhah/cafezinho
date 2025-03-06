@@ -1,10 +1,8 @@
 package com.seucafezinho.api_seu_cafezinho.web.mapper;
 
 import com.seucafezinho.api_seu_cafezinho.entity.Category;
-import com.seucafezinho.api_seu_cafezinho.entity.User;
-import com.seucafezinho.api_seu_cafezinho.web.dto.CategoryRequestDto;
-import com.seucafezinho.api_seu_cafezinho.web.dto.CategoryResponseDto;
-import com.seucafezinho.api_seu_cafezinho.web.dto.UserRequestDto;
+import com.seucafezinho.api_seu_cafezinho.web.dto.request.CategoryRequestDto;
+import com.seucafezinho.api_seu_cafezinho.web.dto.response.CategoryResponseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;

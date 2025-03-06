@@ -2,8 +2,8 @@ package com.seucafezinho.api_seu_cafezinho.web.mapper;
 
 import com.seucafezinho.api_seu_cafezinho.entity.Address;
 import com.seucafezinho.api_seu_cafezinho.entity.User;
-import com.seucafezinho.api_seu_cafezinho.web.dto.AddressRequestDto;
-import com.seucafezinho.api_seu_cafezinho.web.dto.AddressResponseDto;
+import com.seucafezinho.api_seu_cafezinho.web.dto.request.AddressRequestDto;
+import com.seucafezinho.api_seu_cafezinho.web.dto.response.AddressResponseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -21,6 +21,7 @@ public interface AddressMapper {
     @Mapping(source = "neighborhood" , target = "neighborhood")
     Address toAddress(AddressRequestDto createDto);
 
+    @Mapping(source = "user.id", target = "userId")
     AddressResponseDto toDto(Address address);
 
     @Mapping(target = "id", ignore = true)

@@ -1,20 +1,16 @@
-package com.seucafezinho.api_seu_cafezinho.web.dto;
+package com.seucafezinho.api_seu_cafezinho.web.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.UUID;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponseDto {
+public class CategoryResponseDto {
 
-    private UUID id;
+    private Long id;
     private String name;
-    private String phone;
-    private String role;
 }
