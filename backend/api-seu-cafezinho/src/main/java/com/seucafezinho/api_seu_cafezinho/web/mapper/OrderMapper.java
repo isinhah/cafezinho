@@ -3,6 +3,9 @@ package com.seucafezinho.api_seu_cafezinho.web.mapper;
 import com.seucafezinho.api_seu_cafezinho.entity.Address;
 import com.seucafezinho.api_seu_cafezinho.entity.Order;
 import com.seucafezinho.api_seu_cafezinho.entity.OrderItem;
+import com.seucafezinho.api_seu_cafezinho.entity.enums.DeliveryMethod;
+import com.seucafezinho.api_seu_cafezinho.entity.enums.OrderStatus;
+import com.seucafezinho.api_seu_cafezinho.entity.enums.PaymentMethod;
 import com.seucafezinho.api_seu_cafezinho.web.dto.request.OrderItemRequestDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.request.OrderRequestDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.response.OrderItemResponseDto;
@@ -44,33 +47,33 @@ public interface OrderMapper {
     OrderResponseDto toDto(Order order);
 
     @Named("mapDeliveryMethod")
-    default Order.DeliveryMethod mapDeliveryMethod(String deliveryMethod) {
+    default DeliveryMethod mapDeliveryMethod(String deliveryMethod) {
         if (deliveryMethod != null) {
-            return Order.DeliveryMethod.valueOf(deliveryMethod.toUpperCase());
+            return DeliveryMethod.valueOf(deliveryMethod.toUpperCase());
         }
         return null;
     }
 
     @Named("mapDeliveryMethodToString")
-    default String mapDeliveryMethodToString(Order.DeliveryMethod deliveryMethod) {
+    default String mapDeliveryMethodToString(DeliveryMethod deliveryMethod) {
         return deliveryMethod != null ? deliveryMethod.name() : null;
     }
 
     @Named("mapPaymentMethod")
-    default Order.PaymentMethod mapPaymentMethod(String paymentMethod) {
+    default PaymentMethod mapPaymentMethod(String paymentMethod) {
         if (paymentMethod != null) {
-            return Order.PaymentMethod.valueOf(paymentMethod.toUpperCase());
+            return PaymentMethod.valueOf(paymentMethod.toUpperCase());
         }
         return null;
     }
 
     @Named("mapPaymentMethodToString")
-    default String mapPaymentMethodToString(Order.PaymentMethod paymentMethod) {
+    default String mapPaymentMethodToString(PaymentMethod paymentMethod) {
         return paymentMethod != null ? paymentMethod.name() : null;
     }
 
     @Named("mapStatusToString")
-    default String mapStatusToString(Order.OrderStatus status) {
+    default String mapStatusToString(OrderStatus status) {
         return status != null ? status.name() : null;
     }
 

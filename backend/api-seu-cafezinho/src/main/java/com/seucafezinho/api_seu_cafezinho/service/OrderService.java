@@ -5,6 +5,9 @@ import com.seucafezinho.api_seu_cafezinho.entity.Order;
 import com.seucafezinho.api_seu_cafezinho.entity.OrderItem;
 import com.seucafezinho.api_seu_cafezinho.entity.Product;
 import com.seucafezinho.api_seu_cafezinho.entity.User;
+import com.seucafezinho.api_seu_cafezinho.entity.enums.DeliveryMethod;
+import com.seucafezinho.api_seu_cafezinho.entity.enums.OrderStatus;
+import com.seucafezinho.api_seu_cafezinho.entity.enums.PaymentMethod;
 import com.seucafezinho.api_seu_cafezinho.repository.AddressRepository;
 import com.seucafezinho.api_seu_cafezinho.repository.OrderItemRepository;
 import com.seucafezinho.api_seu_cafezinho.repository.OrderRepository;
@@ -54,9 +57,9 @@ public class OrderService {
 
         Order order = Order.builder()
                 .user(user)
-                .status(Order.OrderStatus.PENDING)
-                .deliveryMethod(Order.DeliveryMethod.valueOf(orderRequestDto.getDeliveryMethod()))
-                .paymentMethod(Order.PaymentMethod.valueOf(orderRequestDto.getPaymentMethod()))
+                .status(OrderStatus.PENDING)
+                .deliveryMethod(DeliveryMethod.valueOf(orderRequestDto.getDeliveryMethod()))
+                .paymentMethod(PaymentMethod.valueOf(orderRequestDto.getPaymentMethod()))
                 .totalPrice(BigDecimal.ZERO)
                 .build();
 
@@ -93,8 +96,8 @@ public class OrderService {
         User user = findUserById(userId);
         Order order = findOrderByIdAndUser(orderId, user);
 
-        order.setDeliveryMethod(Order.DeliveryMethod.valueOf(orderRequestDto.getDeliveryMethod()));
-        order.setPaymentMethod(Order.PaymentMethod.valueOf(orderRequestDto.getPaymentMethod()));
+        order.setDeliveryMethod(DeliveryMethod.valueOf(orderRequestDto.getDeliveryMethod()));
+        order.setPaymentMethod(PaymentMethod.valueOf(orderRequestDto.getPaymentMethod()));
 
         if (orderRequestDto.getDeliveryMethod().equalsIgnoreCase("HOME_DELIVERY")) {
             Address address = findAddressById(orderRequestDto.getAddressId());

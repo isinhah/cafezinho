@@ -1,6 +1,9 @@
 package com.seucafezinho.api_seu_cafezinho.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.seucafezinho.api_seu_cafezinho.entity.enums.DeliveryMethod;
+import com.seucafezinho.api_seu_cafezinho.entity.enums.OrderStatus;
+import com.seucafezinho.api_seu_cafezinho.entity.enums.PaymentMethod;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -73,25 +76,6 @@ public class Order implements Serializable {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderItem> orderItems = new ArrayList<>();
-
-    public enum OrderStatus {
-        PENDING,
-        IN_PROGRESS,
-        DELIVERING,
-        READY_FOR_PICKUP,
-        COMPLETED,
-        CANCELED;
-    }
-
-    public enum DeliveryMethod {
-        HOME_DELIVERY,
-        PICKUP
-    }
-
-    public enum PaymentMethod {
-        CASH,
-        PIX
-    }
 
     public void calculateTotalPrice() {
         totalPrice = orderItems.stream()
