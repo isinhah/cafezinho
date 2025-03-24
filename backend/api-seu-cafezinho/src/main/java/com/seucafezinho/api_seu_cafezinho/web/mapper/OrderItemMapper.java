@@ -16,25 +16,13 @@ public interface OrderItemMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "order", ignore = true)
-    @Mapping(target = "totalPrice", ignore = true)
-    @Mapping(source = "createDto.quantity", target = "unitQuantity")
     @Mapping(source = "product.price", target = "unitPrice")
-    @Mapping(source = "product.id", target = "product", qualifiedByName = "mapProduct")
+    @Mapping(source = "createDto.productQuantity", target = "productQuantity")
+    @Mapping(source = "product", target = "product")
     OrderItem toOrderItem(OrderItemRequestDto createDto, Product product);
 
     @Mapping(source = "product.id", target = "productId")
-    @Mapping(source = "product.name", target = "productName")
-    @Mapping(target = "quantity", source = "unitQuantity")
+    @Mapping(source = "product.name", target = "name")
+    @Mapping(source = "productQuantity", target = "quantity")
     OrderItemResponseDto toDto(OrderItem orderItem);
-
-    @Named("mapProduct")
-    default Product mapProduct(Long productId) {
-        if (productId == null) {
-            return null;
-        }
-
-        Product product = new Product();
-        product.setId(productId);
-        return product;
-    }
 }

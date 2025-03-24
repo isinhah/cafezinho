@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import javax.swing.text.html.Option;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,6 +17,4 @@ public interface AddressRepository extends JpaRepository<Address, UUID> {
     Page<Address> findAllByUser(User user, Pageable pageable);
 
     boolean existsByUserAndStreetIgnoreCase(User user, String street);
-
-    Optional<Address> findByUserId(UUID userId);
 }

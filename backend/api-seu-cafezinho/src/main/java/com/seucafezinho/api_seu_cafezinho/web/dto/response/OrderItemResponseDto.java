@@ -1,12 +1,12 @@
 package com.seucafezinho.api_seu_cafezinho.web.dto.response;
 
+import com.seucafezinho.api_seu_cafezinho.entity.OrderItem;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -15,8 +15,14 @@ import java.util.UUID;
 public class OrderItemResponseDto {
 
     private Long productId;
-    private String productName;
+    private String name;
     private Integer quantity;
     private BigDecimal unitPrice;
-    private BigDecimal totalPrice;
+
+    public OrderItemResponseDto(OrderItem orderItem) {
+        this.productId = orderItem.getProduct().getId();
+        this.name = orderItem.getProduct().getName();
+        this.quantity = orderItem.getProductQuantity();
+        this.unitPrice = orderItem.getProduct().getPrice();
+    }
 }

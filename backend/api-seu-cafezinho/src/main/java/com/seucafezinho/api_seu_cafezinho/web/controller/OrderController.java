@@ -3,12 +3,16 @@ package com.seucafezinho.api_seu_cafezinho.web.controller;
 import com.seucafezinho.api_seu_cafezinho.service.OrderService;
 import com.seucafezinho.api_seu_cafezinho.web.dto.request.OrderRequestDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.response.OrderResponseDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +22,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/users/{userId}/orders")
+@RequestMapping("/api/v1/orders/{userId}")
 public class OrderController {
 
     private final OrderService orderService;
@@ -31,20 +35,26 @@ public class OrderController {
         return ResponseEntity.ok(order);
     }
 
+    @GetMapping
+    public Page<OrderResponseDto> getAllOrdersFromUser(Pageable pageable) {
+        return orderService.findAll(pageable);
+    }
+
+    @PostMapping
     public ResponseEntity<OrderResponseDto> createOrder(
             @PathVariable UUID userId,
-            @RequestBody OrderRequestDto orderRequestDto) {
-        OrderResponseDto createdOrder = orderService.create(userId, orderRequestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdOrder);
+            @Valid @RequestBody OrderRequestDto createDto) {
+        OrderResponseDto newOrder = orderService.createOrder(userId, createDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newOrder);
     }
 
     @PutMapping("/{orderId}")
-    public ResponseEntity<OrderResponseDto> updateOrder(
+    public ResponseEntity<OrderResponseDto> alterOrder(
             @PathVariable UUID userId,
             @PathVariable UUID orderId,
-            @RequestBody OrderRequestDto orderRequestDto) {
-        OrderResponseDto updatedOrder = orderService.update(userId, orderId, orderRequestDto);
-        return ResponseEntity.ok(updatedOrder);
+            @Valid @RequestBody OrderRequestDto updateDto) {
+        OrderResponseDto existingOrder = orderService.updateOrder(userId, orderId, updateDto);
+        return ResponseEntity.ok(existingOrder);
     }
 
     @DeleteMapping("/{orderId}")

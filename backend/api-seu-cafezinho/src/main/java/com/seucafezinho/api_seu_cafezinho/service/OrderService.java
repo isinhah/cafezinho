@@ -1,29 +1,39 @@
 package com.seucafezinho.api_seu_cafezinho.service;
 
-import com.seucafezinho.api_seu_cafezinho.entity.*;
+import com.seucafezinho.api_seu_cafezinho.entity.Address;
+import com.seucafezinho.api_seu_cafezinho.entity.Order;
+import com.seucafezinho.api_seu_cafezinho.entity.OrderItem;
+import com.seucafezinho.api_seu_cafezinho.entity.Product;
+import com.seucafezinho.api_seu_cafezinho.entity.User;
 import com.seucafezinho.api_seu_cafezinho.repository.AddressRepository;
+import com.seucafezinho.api_seu_cafezinho.repository.OrderItemRepository;
 import com.seucafezinho.api_seu_cafezinho.repository.OrderRepository;
+import com.seucafezinho.api_seu_cafezinho.repository.ProductRepository;
 import com.seucafezinho.api_seu_cafezinho.repository.UserRepository;
 import com.seucafezinho.api_seu_cafezinho.web.dto.request.OrderRequestDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.response.OrderResponseDto;
-import com.seucafezinho.api_seu_cafezinho.web.exception.BusinessException;
 import com.seucafezinho.api_seu_cafezinho.web.mapper.OrderMapper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
     private final UserRepository userRepository;
+    private final ProductRepository productRepository;
     private final AddressRepository addressRepository;
-    private final PaymentService paymentService;
 
     @Transactional(readOnly = true)
     public OrderResponseDto findByIdAndUser(UUID userId, UUID orderId) {
@@ -32,65 +42,86 @@ public class OrderService {
         return OrderMapper.INSTANCE.toDto(order);
     }
 
+    @Transactional(readOnly = true)
+    public Page<OrderResponseDto> findAll(Pageable pageable) {
+        return orderRepository.findAll(pageable)
+                .map(OrderMapper.INSTANCE::toDto);
+    }
+
     @Transactional
-    public OrderResponseDto create(UUID userId, OrderRequestDto orderDto) {
+    public OrderResponseDto createOrder(UUID userId, OrderRequestDto orderRequestDto) {
         User user = findUserById(userId);
 
-        Address address = validateAddress(orderDto, user);
-        validateOrderRules(orderDto, address);
+        Order order = Order.builder()
+                .user(user)
+                .status(Order.OrderStatus.PENDING)
+                .deliveryMethod(Order.DeliveryMethod.valueOf(orderRequestDto.getDeliveryMethod()))
+                .paymentMethod(Order.PaymentMethod.valueOf(orderRequestDto.getPaymentMethod()))
+                .totalPrice(BigDecimal.ZERO)
+                .build();
 
-        Order order = OrderMapper.INSTANCE.toOrder(orderDto);
-        order.setUser(user);
-        order.setAddress(address);
+        if (orderRequestDto.getDeliveryMethod().equalsIgnoreCase("HOME_DELIVERY")) {
+            Address address = findAddressById(orderRequestDto.getAddressId());
+            order.setAddress(address);
+        }
 
-        List<OrderItem> orderItems = OrderMapper.INSTANCE.mapOrderItems(orderDto.getItems());
+        List<OrderItem> orderItems = orderRequestDto.getProducts().stream()
+                .map(itemDto -> {
+                    Product product = findProductById(itemDto.getProductId());
+                    OrderItem orderItem = new OrderItem();
+                    orderItem.setProduct(product);
+                    orderItem.setProductQuantity(itemDto.getProductQuantity());
+                    orderItem.setUnitPrice(product.getPrice());
+                    orderItem.setOrder(order);
+                    return orderItem;
+                })
+                .collect(Collectors.toList());
+
         order.setOrderItems(orderItems);
 
         order.calculateTotalPrice();
 
         Order savedOrder = orderRepository.save(order);
-        paymentService.createPaymentForOrder(savedOrder);
+
+        orderItemRepository.saveAll(orderItems);
 
         return OrderMapper.INSTANCE.toDto(savedOrder);
     }
 
     @Transactional
-    public OrderResponseDto update(UUID userId, UUID orderId, OrderRequestDto orderDto) {
+    public OrderResponseDto updateOrder(UUID userId, UUID orderId, OrderRequestDto orderRequestDto) {
         User user = findUserById(userId);
         Order order = findOrderByIdAndUser(orderId, user);
 
-        Address address = validateAddress(orderDto, user);
-        validateOrderRules(orderDto, address);
+        order.setDeliveryMethod(Order.DeliveryMethod.valueOf(orderRequestDto.getDeliveryMethod()));
+        order.setPaymentMethod(Order.PaymentMethod.valueOf(orderRequestDto.getPaymentMethod()));
 
-        OrderMapper.INSTANCE.updateOrderFromDto(orderDto, order);
+        if (orderRequestDto.getDeliveryMethod().equalsIgnoreCase("HOME_DELIVERY")) {
+            Address address = findAddressById(orderRequestDto.getAddressId());
+            order.setAddress(address);
+        }
 
-        List<OrderItem> updatedItems = OrderMapper.INSTANCE.mapOrderItems(orderDto.getItems());
-        order.setOrderItems(updatedItems);
+        List<OrderItem> orderItems = orderRequestDto.getProducts().stream()
+                .map(itemDto -> {
+                    Product product = findProductById(itemDto.getProductId());
+                    OrderItem orderItem = new OrderItem();
+                    orderItem.setProduct(product);
+                    orderItem.setProductQuantity(itemDto.getProductQuantity());
+                    orderItem.setUnitPrice(product.getPrice());
+                    orderItem.setOrder(order);
+                    return orderItem;
+                })
+                .collect(Collectors.toList());
+
+        order.setOrderItems(orderItems);
 
         order.calculateTotalPrice();
 
         Order updatedOrder = orderRepository.save(order);
 
-        if (updatedOrder.getPayment() == null) {
-            paymentService.createPaymentForOrder(updatedOrder);
-        }
+        orderItemRepository.saveAll(orderItems);
 
         return OrderMapper.INSTANCE.toDto(updatedOrder);
-    }
-
-    private void validateOrderRules(OrderRequestDto dto, Address address) {
-        if (dto.getDeliveryMethod() == Order.DeliveryMethod.HOME_DELIVERY &&
-                dto.getStatus() == Order.OrderStatus.READY_FOR_PICKUP) {
-            throw new BusinessException("Cannot have status READY_FOR_PICKUP with HOME_DELIVERY method.");
-        }
-    }
-
-    private Address validateAddress(OrderRequestDto dto, User user) {
-        if (dto.getDeliveryMethod() == Order.DeliveryMethod.HOME_DELIVERY) {
-            return addressRepository.findByUserId(user.getId())
-                    .orElseThrow(() -> new BusinessException("User must provide an address for HOME_DELIVERY."));
-        }
-        return null;
     }
 
     @Transactional
@@ -112,5 +143,17 @@ public class OrderService {
     private User findUserById(UUID userId) {
         return userRepository.findById(userId).orElseThrow(
                 () -> new EntityNotFoundException(String.format("User with id: '%s' not found", userId)));
+    }
+
+    @Transactional(readOnly = true)
+    private Product findProductById(Long productId) {
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+    }
+
+    @Transactional(readOnly = true)
+    private Address findAddressById(UUID addressId) {
+        return addressRepository.findById(addressId)
+                .orElseThrow(() -> new EntityNotFoundException("Address not found"));
     }
 }

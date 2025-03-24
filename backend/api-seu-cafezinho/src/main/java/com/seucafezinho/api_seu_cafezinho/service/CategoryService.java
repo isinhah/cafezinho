@@ -43,7 +43,7 @@ public class CategoryService {
     }
 
     @Transactional
-    public CategoryResponseDto save(CategoryRequestDto createDto) {
+    public CategoryResponseDto create(CategoryRequestDto createDto) {
         if (categoryRepository.existsByNameIgnoreCase(createDto.getName())) {
             throw new UniqueViolationException(String.format("The name: '%s' already exists", createDto.getName()));
         }

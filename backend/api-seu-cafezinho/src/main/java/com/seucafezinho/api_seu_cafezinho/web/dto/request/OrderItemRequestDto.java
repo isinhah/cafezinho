@@ -20,5 +20,5 @@ public class OrderItemRequestDto {
 
     @NotNull(message = "Quantity cannot be null")
     @Positive(message = "Quantity must be positive")
-    private Integer quantity;
+    private Integer productQuantity;
 }

@@ -46,5 +46,4 @@ public interface UserMapper {
     default String mapRoleToDto(User.Role role) {
         return role.name().replace("ROLE_", "");
     }
-
 }

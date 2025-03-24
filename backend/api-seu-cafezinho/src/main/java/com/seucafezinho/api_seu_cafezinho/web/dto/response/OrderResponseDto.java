@@ -1,6 +1,5 @@
 package com.seucafezinho.api_seu_cafezinho.web.dto.response;
 
-import com.seucafezinho.api_seu_cafezinho.entity.Order;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,10 +16,12 @@ import java.util.UUID;
 public class OrderResponseDto {
 
     private UUID id;
-    private String user;
     private UUID addressId;
+    private String deliveryMethod;
+    private String paymentMethod;
+    private String name;
+    private String phone;
+    private String status;
     private BigDecimal totalPrice;
-    private Order.OrderStatus status;
-    private Order.DeliveryMethod deliveryMethod;
     private List<OrderItemResponseDto> items;
 }

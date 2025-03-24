@@ -9,7 +9,6 @@ import com.seucafezinho.api_seu_cafezinho.web.dto.response.OrderItemResponseDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.response.OrderResponseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
@@ -24,30 +23,56 @@ public interface OrderMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "user", ignore = true)
-    @Mapping(target = "payment", ignore = true)
     @Mapping(target = "totalPrice", ignore = true)
     @Mapping(target = "createdDate", ignore = true)
     @Mapping(target = "updatedDate", ignore = true)
-    @Mapping(source = "status", target = "status")
-    @Mapping(source = "deliveryMethod", target = "deliveryMethod")
+    @Mapping(target = "status", ignore = true)
+    @Mapping(source = "paymentMethod", target = "paymentMethod", qualifiedByName = "mapPaymentMethod")
+    @Mapping(source = "deliveryMethod", target = "deliveryMethod", qualifiedByName = "mapDeliveryMethod")
     @Mapping(source = "addressId", target = "address", qualifiedByName = "mapAddress")
-    @Mapping(source = "items", target = "orderItems", qualifiedByName = "mapOrderItems")
+    @Mapping(source = "products", target = "orderItems", qualifiedByName = "mapOrderItems")
     Order toOrder(OrderRequestDto createDto);
 
-    @Mapping(source = "user.name", target = "user")
+    @Mapping(source = "user.name", target = "name")
+    @Mapping(source = "user.phone", target = "phone")
     @Mapping(source = "address.id", target = "addressId")
+    @Mapping(source = "paymentMethod", target = "paymentMethod", qualifiedByName = "mapPaymentMethodToString")
+    @Mapping(source = "deliveryMethod", target = "deliveryMethod", qualifiedByName = "mapDeliveryMethodToString")
+    @Mapping(source = "status", target = "status", qualifiedByName = "mapStatusToString")
     @Mapping(source = "orderItems", target = "items", qualifiedByName = "mapOrderItemDtos")
+    @Mapping(source = "totalPrice", target = "totalPrice")
     OrderResponseDto toDto(Order order);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "user", ignore = true)
-    @Mapping(target = "payment", ignore = true)
-    @Mapping(target = "totalPrice", ignore = true)
-    @Mapping(target = "createdDate", ignore = true)
-    @Mapping(target = "updatedDate", ignore = true)
-    @Mapping(source = "addressId", target = "address", qualifiedByName = "mapAddress")
-    @Mapping(source = "items", target = "orderItems", qualifiedByName = "mapOrderItems")
-    void updateOrderFromDto(OrderRequestDto updateDto, @MappingTarget Order order);
+    @Named("mapDeliveryMethod")
+    default Order.DeliveryMethod mapDeliveryMethod(String deliveryMethod) {
+        if (deliveryMethod != null) {
+            return Order.DeliveryMethod.valueOf(deliveryMethod.toUpperCase());
+        }
+        return null;
+    }
+
+    @Named("mapDeliveryMethodToString")
+    default String mapDeliveryMethodToString(Order.DeliveryMethod deliveryMethod) {
+        return deliveryMethod != null ? deliveryMethod.name() : null;
+    }
+
+    @Named("mapPaymentMethod")
+    default Order.PaymentMethod mapPaymentMethod(String paymentMethod) {
+        if (paymentMethod != null) {
+            return Order.PaymentMethod.valueOf(paymentMethod.toUpperCase());
+        }
+        return null;
+    }
+
+    @Named("mapPaymentMethodToString")
+    default String mapPaymentMethodToString(Order.PaymentMethod paymentMethod) {
+        return paymentMethod != null ? paymentMethod.name() : null;
+    }
+
+    @Named("mapStatusToString")
+    default String mapStatusToString(Order.OrderStatus status) {
+        return status != null ? status.name() : null;
+    }
 
     @Named("mapAddress")
     default Address mapAddress(UUID addressId) {
@@ -57,30 +82,6 @@ public interface OrderMapper {
         Address address = new Address();
         address.setId(addressId);
         return address;
-    }
-
-    @Named("mapOrderItem")
-    default OrderItem mapOrderItem(OrderItemRequestDto itemDto) {
-        if (itemDto == null) {
-            return null;
-        }
-
-        OrderItem item = new OrderItem();
-        item.setUnitQuantity(itemDto.getQuantity());
-
-        return item;
-    }
-
-    default OrderItemResponseDto mapOrderItemDto(OrderItem orderItem) {
-        if (orderItem == null) {
-            return null;
-        }
-        OrderItemResponseDto itemDto = new OrderItemResponseDto();
-        itemDto.setProductName(orderItem.getProduct().getName());
-        itemDto.setQuantity(orderItem.getUnitQuantity());
-        itemDto.setUnitPrice(orderItem.getUnitPrice());
-        itemDto.setTotalPrice(orderItem.getTotalPrice());
-        return itemDto;
     }
 
     @Named("mapOrderItems")
@@ -93,13 +94,22 @@ public interface OrderMapper {
                 .collect(Collectors.toList());
     }
 
+    default OrderItem mapOrderItem(OrderItemRequestDto itemDto) {
+        if (itemDto == null) {
+            return null;
+        }
+        OrderItem item = new OrderItem();
+        item.setProductQuantity(itemDto.getProductQuantity());
+        return item;
+    }
+
     @Named("mapOrderItemDtos")
     default List<OrderItemResponseDto> mapOrderItemDtos(List<OrderItem> orderItems) {
         if (orderItems == null) {
             return null;
         }
         return orderItems.stream()
-                .map(this::mapOrderItemDto)
+                .map(OrderItemResponseDto::new)
                 .collect(Collectors.toList());
     }
 }

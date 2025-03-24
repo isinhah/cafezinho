@@ -1,14 +1,14 @@
 package com.seucafezinho.api_seu_cafezinho.web.dto.request;
 
-import com.seucafezinho.api_seu_cafezinho.entity.Order;
+import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @Setter
@@ -16,14 +16,22 @@ import java.util.UUID;
 @AllArgsConstructor
 public class OrderRequestDto {
 
-    @NotNull(message = "Address ID cannot be null")
+    @NotNull(message = "Delivery method cannot be null. Use 'HOME_DELIVERY' or 'PICKUP'.")
+    private String deliveryMethod;
+
     private UUID addressId;
 
-    @NotNull(message = "Order status cannot be null")
-    private Order.OrderStatus status;
+    @NotEmpty(message = "The order must contain at least one product.")
+    private List<OrderItemRequestDto> products = new ArrayList<>();
 
-    @NotNull(message = "Delivery method cannot be null")
-    private Order.DeliveryMethod deliveryMethod;
+    @NotNull(message = "Payment method cannot be null. Use 'PIX', or 'CASH'.")
+    private String paymentMethod;
 
-    private List<OrderItemRequestDto> items;
+    @AssertTrue(message = "Address ID is required for HOME_DELIVERY and must be null for PICKUP.")
+    private boolean isValidAddressForHomeDelivery() {
+        if ("HOME_DELIVERY".equals(deliveryMethod)) {
+            return addressId != null;
+        }
+        return "PICKUP".equals(deliveryMethod) && addressId == null;
+    }
 }
