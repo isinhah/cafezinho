@@ -13,23 +13,21 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+@Builder
 @AllArgsConstructor @NoArgsConstructor @Getter @Setter
 @Entity
 @Table(name = "tb_orders")
@@ -42,16 +40,18 @@ public class Order implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
+    @Column(name = "total_price", precision = 10, scale = 2)
     private BigDecimal totalPrice;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "order_status", nullable = false)
     private OrderStatus status;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "delivery_method", nullable = false)
     private DeliveryMethod deliveryMethod;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payment_method", nullable = false)
+    private PaymentMethod paymentMethod;
 
     @Column(name = "created_date", updatable = false)
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
@@ -60,19 +60,15 @@ public class Order implements Serializable {
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime updatedDate;
 
-    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
-    private Payment payment;
-
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
     @ManyToOne
-    @JoinColumn(name = "address_id", nullable = false)
+    @JoinColumn(name = "address_id")
     private Address address;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<OrderItem> orderItems;
+    private List<OrderItem> orderItems = new ArrayList<>();
 
     public enum OrderStatus {
         PENDING,
@@ -88,12 +84,15 @@ public class Order implements Serializable {
         PICKUP
     }
 
+    public enum PaymentMethod {
+        CASH,
+        PIX
+    }
+
     public void calculateTotalPrice() {
-        if (orderItems != null && !orderItems.isEmpty()) {
-            this.totalPrice = orderItems.stream()
-                    .map(OrderItem::getTotalPrice)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-        }
+        totalPrice = orderItems.stream()
+                .map(item -> item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getProductQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     @PrePersist
@@ -118,4 +117,3 @@ public class Order implements Serializable {
         return Objects.hashCode(id);
     }
 }
-
