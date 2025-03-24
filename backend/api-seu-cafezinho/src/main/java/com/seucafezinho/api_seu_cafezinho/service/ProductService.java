@@ -22,12 +22,19 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
 
-    public ProductResponseDto findByIdAndCategory(Long categoryId, Long productId) {
-        Category category = findCategoryById(categoryId);
-        Product product = findProductByIdAndCategory(productId, category);
+    @Transactional(readOnly = true)
+    public ProductResponseDto findById(Long productId) {
+        Product product = findProductById(productId);
         return ProductMapper.INSTANCE.toDto(product);
     }
 
+    @Transactional(readOnly = true)
+    public Page<ProductResponseDto> findAll(Pageable pageable) {
+        return productRepository.findAll(pageable)
+                .map(ProductMapper.INSTANCE::toDto);
+    }
+
+    @Transactional(readOnly = true)
     public Page<ProductResponseDto> findAllByCategory(Long categoryId, Pageable pageable) {
         Category category = findCategoryById(categoryId);
         return productRepository.findAllByCategory(category, pageable)
@@ -35,23 +42,33 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponseDto create(ProductRequestDto createDto, Long categoryId) {
+    public ProductResponseDto addProductToCategory(Long categoryId, Long productId) {
         Category category = findCategoryById(categoryId);
+        Product product = findProductById(productId);
 
-        Product product = ProductMapper.INSTANCE.toEntity(createDto, category);
+        category.getProducts().add(product);
 
+        product.setCategory(category);
+
+        categoryRepository.save(category);
+
+        return ProductMapper.INSTANCE.toDto(product);
+    }
+
+    @Transactional
+    public ProductResponseDto create(ProductRequestDto createDto) {
+        Product product = ProductMapper.INSTANCE.toEntity(createDto, null);
         Product savedProduct = productRepository.save(product);
         return ProductMapper.INSTANCE.toDto(savedProduct);
     }
 
     @Transactional
-    public ProductResponseDto update(Long categoryId, Long productId, ProductRequestDto updateDto) {
-        Category category = findCategoryById(categoryId);
-        Product existingProduct = findProductByIdAndCategory(productId, category);
+    public ProductResponseDto update(Long productId, ProductRequestDto updateDto) {
+        Product existingProduct = findProductById(productId);
 
-        if (productRepository.existsByCategoryAndNameIgnoreCase(category, updateDto.getName())
+        if (productRepository.existsByNameIgnoreCase(updateDto.getName())
                 && !existingProduct.getName().equalsIgnoreCase(updateDto.getName())) {
-            throw new UniqueViolationException(String.format("Another product with the name: '%s' already exists for this category", updateDto.getName()));
+            throw new UniqueViolationException(String.format("Another product with the name: '%s' already exists", updateDto.getName()));
         }
 
         ProductMapper.INSTANCE.updateProductFromDto(updateDto, existingProduct);
@@ -60,17 +77,16 @@ public class ProductService {
     }
 
     @Transactional
-    public void delete(Long categoryId, Long productId) {
-        Category category = findCategoryById(categoryId);
-        Product product = findProductByIdAndCategory(productId, category);
+    public void delete(Long productId) {
+        Product product = findProductById(productId);
         productRepository.delete(product);
     }
 
     @Transactional(readOnly = true)
-    private Product findProductByIdAndCategory(Long productId, Category category) {
-        return productRepository.findByIdAndCategory(productId, category)
+    private Product findProductById(Long productId) {
+        return productRepository.findById(productId)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Product with id: '%s' not found for category: '%s'", productId, category.getId())
+                        String.format("Product with id: '%s' not found", productId)
                 ));
     }
 

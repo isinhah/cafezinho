@@ -20,49 +20,41 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/categories/{categoryId}/products")
+@RequestMapping("/api/v1/products")
 public class ProductController {
 
     private final ProductService productService;
 
     @GetMapping("/{productId}")
-    public ResponseEntity<ProductResponseDto> getProductById(
-            @PathVariable Long categoryId,
-            @PathVariable Long productId) {
-        ProductResponseDto product = productService.findByIdAndCategory(productId, categoryId);
+    public ResponseEntity<ProductResponseDto> getProductById(@PathVariable Long productId) {
+        ProductResponseDto product = productService.findById(productId);
         return ResponseEntity.ok(product);
     }
 
     @GetMapping
-    public ResponseEntity<Page<ProductResponseDto>> getProductsByCategory(
-            @PathVariable Long categoryId,
-            Pageable pageable) {
-        Page<ProductResponseDto> products = productService.findAllByCategory(categoryId, pageable);
-        return ResponseEntity.ok(products);
+    public Page<ProductResponseDto> getAllProducts(Pageable pageable) {
+        return productService.findAll(pageable);
     }
 
     @PostMapping
     public ResponseEntity<ProductResponseDto> createProduct(
-            @PathVariable Long categoryId,
             @Valid @RequestBody ProductRequestDto createDto) {
-        ProductResponseDto newProduct = productService.create(createDto, categoryId);
+        ProductResponseDto newProduct = productService.create(createDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(newProduct);
     }
 
     @PutMapping("/{productId}")
-    public ResponseEntity<ProductResponseDto> updateProduct(
-            @PathVariable Long categoryId,
+    public ResponseEntity<ProductResponseDto> alterProduct(
             @PathVariable Long productId,
             @Valid @RequestBody ProductRequestDto updateDto) {
-        ProductResponseDto existingProduct = productService.update(categoryId, productId, updateDto);
+        ProductResponseDto existingProduct = productService.update(productId, updateDto);
         return ResponseEntity.ok(existingProduct);
     }
 
     @DeleteMapping("/{productId}")
     public ResponseEntity<Void> deleteProduct(
-            @PathVariable Long categoryId,
             @PathVariable Long productId) {
-        productService.delete(productId, categoryId);
+        productService.delete(productId);
         return ResponseEntity.noContent().build();
     }
 }

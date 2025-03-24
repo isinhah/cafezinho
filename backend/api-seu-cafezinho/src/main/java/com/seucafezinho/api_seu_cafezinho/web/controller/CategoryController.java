@@ -1,8 +1,10 @@
 package com.seucafezinho.api_seu_cafezinho.web.controller;
 
 import com.seucafezinho.api_seu_cafezinho.service.CategoryService;
+import com.seucafezinho.api_seu_cafezinho.service.ProductService;
 import com.seucafezinho.api_seu_cafezinho.web.dto.request.CategoryRequestDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.response.CategoryResponseDto;
+import com.seucafezinho.api_seu_cafezinho.web.dto.response.ProductResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CategoryController {
 
     private final CategoryService categoryService;
+    private final ProductService productService;
 
     @GetMapping("/{id}")
     public ResponseEntity<CategoryResponseDto> getCategoryById(@PathVariable Long id) {
@@ -41,6 +44,21 @@ public class CategoryController {
     public ResponseEntity<CategoryResponseDto> getCategoryByName(@RequestParam String name) {
         CategoryResponseDto response = categoryService.findByName(name);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{categoryId}/products")
+    public ResponseEntity<Page<ProductResponseDto>> getProductsByCategory(
+            @PathVariable Long categoryId, Pageable pageable) {
+        Page<ProductResponseDto> products = productService.findAllByCategory(categoryId, pageable);
+        return ResponseEntity.ok(products);
+    }
+
+    @PostMapping("/{categoryId}/products/{productId}")
+    public ResponseEntity<ProductResponseDto> addProductToCategory(
+            @PathVariable Long categoryId,
+            @PathVariable Long productId) {
+        ProductResponseDto updatedProduct = productService.addProductToCategory(categoryId, productId);
+        return ResponseEntity.ok(updatedProduct);
     }
 
     @PostMapping

@@ -1,6 +1,7 @@
 package com.seucafezinho.api_seu_cafezinho.service;
 
 import com.seucafezinho.api_seu_cafezinho.entity.Category;
+import com.seucafezinho.api_seu_cafezinho.entity.Product;
 import com.seucafezinho.api_seu_cafezinho.repository.CategoryRepository;
 import com.seucafezinho.api_seu_cafezinho.web.dto.request.CategoryRequestDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.response.CategoryResponseDto;
@@ -69,6 +70,11 @@ public class CategoryService {
     @Transactional
     public void delete(Long id) {
         Category category = findCategoryById(id);
+
+        for (Product product : category.getProducts()) {
+            product.setCategory(null);
+        }
+
         categoryRepository.delete(category);
     }
 

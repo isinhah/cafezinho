@@ -34,7 +34,7 @@ public class Category implements Serializable {
     @Column(nullable = false, unique = true, length = 100)
     private String name;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "category", cascade = CascadeType.PERSIST)
     private Set<Product> products = new HashSet<>();
 
     @Override
