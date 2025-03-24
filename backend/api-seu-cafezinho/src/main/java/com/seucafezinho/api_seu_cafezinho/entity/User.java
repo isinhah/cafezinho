@@ -42,6 +42,14 @@ public class User implements Serializable {
     private String name;
     @Column(nullable = false, length = 16)
     private String phone;
+    @Column(nullable = false, unique = true, length = 100)
+    private String email;
+    @Column(nullable = false, length = 200)
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 25)
+    private Role role;
 
     @Column(name = "created_date", updatable = false)
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
@@ -52,10 +60,6 @@ public class User implements Serializable {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Address> addresses = new HashSet<>();
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 25)
-    private Role role;
 
     public enum Role {
         ROLE_ADMIN,

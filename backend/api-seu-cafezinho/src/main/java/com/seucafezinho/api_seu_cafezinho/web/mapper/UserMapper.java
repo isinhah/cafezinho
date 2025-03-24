@@ -19,6 +19,7 @@ public interface UserMapper {
     @Mapping(target = "updatedDate", ignore = true)
     @Mapping(target = "addresses", ignore = true)
     @Mapping(source = "name", target = "name")
+    @Mapping(source = "email", target = "email")
     @Mapping(source = "phone" , target = "phone")
     @Mapping(source = "role", target = "role", qualifiedByName = "stringToRole")
     User toUser(UserRequestDto createDto);
