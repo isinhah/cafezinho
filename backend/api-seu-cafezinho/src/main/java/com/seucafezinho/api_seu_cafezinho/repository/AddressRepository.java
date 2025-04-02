@@ -1,7 +1,6 @@
 package com.seucafezinho.api_seu_cafezinho.repository;
 
 import com.seucafezinho.api_seu_cafezinho.entity.Address;
-import com.seucafezinho.api_seu_cafezinho.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,9 +11,9 @@ import java.util.UUID;
 
 @Repository
 public interface AddressRepository extends JpaRepository<Address, UUID> {
-    Optional<Address> findByIdAndUser(UUID id, User user);
+    Page<Address> findAllByUserId(UUID userId, Pageable pageable);
 
-    Page<Address> findAllByUser(User user, Pageable pageable);
+    boolean existsByUserIdAndStreetIgnoreCase(UUID userId, String street);
 
-    boolean existsByUserAndStreetIgnoreCase(User user, String street);
+    Optional<Address> findByIdAndUserId(UUID addressId, UUID userId);
 }

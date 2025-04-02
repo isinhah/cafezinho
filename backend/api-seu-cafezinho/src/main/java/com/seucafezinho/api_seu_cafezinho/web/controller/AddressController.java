@@ -28,10 +28,10 @@ public class AddressController {
     private final AddressService addressService;
 
     @GetMapping("/{addressId}")
-    public ResponseEntity<AddressResponseDto> getAddressById(
+    public ResponseEntity<AddressResponseDto> getAddressByUser(
             @PathVariable UUID userId,
             @PathVariable UUID addressId) {
-        AddressResponseDto address = addressService.findByIdAndUser(addressId, userId);
+        AddressResponseDto address = addressService.findByIdAndUser(userId, addressId);
         return ResponseEntity.ok(address);
     }
 
@@ -64,7 +64,7 @@ public class AddressController {
     public ResponseEntity<Void> deleteAddress(
             @PathVariable UUID userId,
             @PathVariable UUID addressId) {
-        addressService.delete(addressId, userId);
+        addressService.delete(userId, addressId);
         return ResponseEntity.noContent().build();
     }
 }

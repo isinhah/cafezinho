@@ -26,15 +26,13 @@ public class AddressService {
 
     @Transactional(readOnly = true)
     public AddressResponseDto findByIdAndUser(UUID userId, UUID addressId) {
-        User user = findUserById(userId);
-        Address address = findAddressByIdAndUser(addressId, user);
+        Address address = findAddressByIdAndUser(addressId, userId);
         return AddressMapper.INSTANCE.toDto(address);
     }
 
     @Transactional(readOnly = true)
     public Page<AddressResponseDto> findAllByUser(UUID userId, Pageable pageable) {
-        User user = findUserById(userId);
-        return addressRepository.findAllByUser(user, pageable)
+        return addressRepository.findAllByUserId(userId, pageable)
                 .map(AddressMapper.INSTANCE::toDto);
     }
 
@@ -48,11 +46,10 @@ public class AddressService {
 
     @Transactional
     public AddressResponseDto update(UUID userId, UUID addressId, AddressRequestDto updateDto) {
-        User user = findUserById(userId);
-        Address existingAddress = findAddressByIdAndUser(addressId, user);
+        Address existingAddress = findAddressByIdAndUser(addressId, userId);
 
-        if (addressRepository.existsByUserAndStreetIgnoreCase(user, updateDto.getStreet())
-                && !existingAddress.getStreet().equalsIgnoreCase(updateDto.getStreet())) {
+        if (!existingAddress.getStreet().equalsIgnoreCase(updateDto.getStreet()) &&
+                addressRepository.existsByUserIdAndStreetIgnoreCase(userId, updateDto.getStreet())) {
             throw new UniqueViolationException(String.format("Another address with the street name: '%s' already exists for this user", updateDto.getStreet()));
         }
 
@@ -64,16 +61,15 @@ public class AddressService {
 
     @Transactional
     public void delete(UUID userId, UUID addressId) {
-        User user = findUserById(userId);
-        Address address = findAddressByIdAndUser(addressId, user);
+        Address address = findAddressByIdAndUser(addressId, userId);
         addressRepository.delete(address);
     }
 
     @Transactional(readOnly = true)
-    private Address findAddressByIdAndUser(UUID addressId, User user) {
-        return addressRepository.findByIdAndUser(addressId, user)
+    private Address findAddressByIdAndUser(UUID addressId, UUID userId) {
+        return addressRepository.findByIdAndUserId(addressId, userId)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Address with id: '%s' not found for user: '%s'", addressId, user.getId())
+                        String.format("Address with id: '%s' not found for user: '%s'", addressId, userId)
                 ));
     }
 
