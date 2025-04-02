@@ -80,4 +80,12 @@ public class AddressService {
                         String.format("User with id: '%s' not found", userId)
                 ));
     }
+
+    @Transactional(readOnly = true)
+    public Address findAddressById(UUID addressId) {
+        return addressRepository.findById(addressId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Address with id: '%s' not found", addressId)
+                ));
+    }
 }

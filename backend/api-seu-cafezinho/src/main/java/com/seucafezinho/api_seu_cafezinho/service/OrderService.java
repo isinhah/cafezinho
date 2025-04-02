@@ -1,18 +1,11 @@
 package com.seucafezinho.api_seu_cafezinho.service;
 
-import com.seucafezinho.api_seu_cafezinho.entity.Address;
 import com.seucafezinho.api_seu_cafezinho.entity.Order;
-import com.seucafezinho.api_seu_cafezinho.entity.OrderItem;
-import com.seucafezinho.api_seu_cafezinho.entity.Product;
 import com.seucafezinho.api_seu_cafezinho.entity.User;
-import com.seucafezinho.api_seu_cafezinho.entity.enums.DeliveryMethod;
-import com.seucafezinho.api_seu_cafezinho.entity.enums.OrderStatus;
-import com.seucafezinho.api_seu_cafezinho.entity.enums.PaymentMethod;
-import com.seucafezinho.api_seu_cafezinho.repository.AddressRepository;
 import com.seucafezinho.api_seu_cafezinho.repository.OrderItemRepository;
 import com.seucafezinho.api_seu_cafezinho.repository.OrderRepository;
-import com.seucafezinho.api_seu_cafezinho.repository.ProductRepository;
 import com.seucafezinho.api_seu_cafezinho.repository.UserRepository;
+import com.seucafezinho.api_seu_cafezinho.util.OrderFactory;
 import com.seucafezinho.api_seu_cafezinho.web.dto.request.OrderRequestDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.response.OrderResponseDto;
 import com.seucafezinho.api_seu_cafezinho.web.mapper.OrderMapper;
@@ -23,10 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -35,8 +25,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final UserRepository userRepository;
-    private final ProductRepository productRepository;
-    private final AddressRepository addressRepository;
+    private final OrderFactory orderFactory;
 
     @Transactional(readOnly = true)
     public OrderResponseDto findByIdAndUser(UUID userId, UUID orderId) {
@@ -46,7 +35,7 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public Page<OrderResponseDto> findAll(Pageable pageable) {
+    public Page<OrderResponseDto> findAllByUser(Pageable pageable) {
         return orderRepository.findAll(pageable)
                 .map(OrderMapper.INSTANCE::toDto);
     }
@@ -55,38 +44,11 @@ public class OrderService {
     public OrderResponseDto createOrder(UUID userId, OrderRequestDto orderRequestDto) {
         User user = findUserById(userId);
 
-        Order order = Order.builder()
-                .user(user)
-                .status(OrderStatus.PENDING)
-                .deliveryMethod(DeliveryMethod.valueOf(orderRequestDto.getDeliveryMethod()))
-                .paymentMethod(PaymentMethod.valueOf(orderRequestDto.getPaymentMethod()))
-                .totalPrice(BigDecimal.ZERO)
-                .build();
-
-        if (orderRequestDto.getDeliveryMethod().equalsIgnoreCase("HOME_DELIVERY")) {
-            Address address = findAddressById(orderRequestDto.getAddressId());
-            order.setAddress(address);
-        }
-
-        List<OrderItem> orderItems = orderRequestDto.getProducts().stream()
-                .map(itemDto -> {
-                    Product product = findProductById(itemDto.getProductId());
-                    OrderItem orderItem = new OrderItem();
-                    orderItem.setProduct(product);
-                    orderItem.setProductQuantity(itemDto.getProductQuantity());
-                    orderItem.setUnitPrice(product.getPrice());
-                    orderItem.setOrder(order);
-                    return orderItem;
-                })
-                .collect(Collectors.toList());
-
-        order.setOrderItems(orderItems);
-
+        Order order = orderFactory.createOrder(user, orderRequestDto);
         order.calculateTotalPrice();
 
         Order savedOrder = orderRepository.save(order);
-
-        orderItemRepository.saveAll(orderItems);
+        orderItemRepository.saveAll(order.getOrderItems());
 
         return OrderMapper.INSTANCE.toDto(savedOrder);
     }
@@ -96,33 +58,11 @@ public class OrderService {
         User user = findUserById(userId);
         Order order = findOrderByIdAndUser(orderId, user);
 
-        order.setDeliveryMethod(DeliveryMethod.valueOf(orderRequestDto.getDeliveryMethod()));
-        order.setPaymentMethod(PaymentMethod.valueOf(orderRequestDto.getPaymentMethod()));
-
-        if (orderRequestDto.getDeliveryMethod().equalsIgnoreCase("HOME_DELIVERY")) {
-            Address address = findAddressById(orderRequestDto.getAddressId());
-            order.setAddress(address);
-        }
-
-        List<OrderItem> orderItems = orderRequestDto.getProducts().stream()
-                .map(itemDto -> {
-                    Product product = findProductById(itemDto.getProductId());
-                    OrderItem orderItem = new OrderItem();
-                    orderItem.setProduct(product);
-                    orderItem.setProductQuantity(itemDto.getProductQuantity());
-                    orderItem.setUnitPrice(product.getPrice());
-                    orderItem.setOrder(order);
-                    return orderItem;
-                })
-                .collect(Collectors.toList());
-
-        order.setOrderItems(orderItems);
-
+        orderFactory.updateOrder(order, orderRequestDto);
         order.calculateTotalPrice();
 
         Order updatedOrder = orderRepository.save(order);
-
-        orderItemRepository.saveAll(orderItems);
+        orderItemRepository.saveAll(order.getOrderItems());
 
         return OrderMapper.INSTANCE.toDto(updatedOrder);
     }
@@ -146,17 +86,5 @@ public class OrderService {
     private User findUserById(UUID userId) {
         return userRepository.findById(userId).orElseThrow(
                 () -> new EntityNotFoundException(String.format("User with id: '%s' not found", userId)));
-    }
-
-    @Transactional(readOnly = true)
-    private Product findProductById(Long productId) {
-        return productRepository.findById(productId)
-                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
-    }
-
-    @Transactional(readOnly = true)
-    private Address findAddressById(UUID addressId) {
-        return addressRepository.findById(addressId)
-                .orElseThrow(() -> new EntityNotFoundException("Address not found"));
     }
 }

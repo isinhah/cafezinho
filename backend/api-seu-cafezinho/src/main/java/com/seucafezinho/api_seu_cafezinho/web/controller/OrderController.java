@@ -28,7 +28,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<OrderResponseDto> getOrderById(
+    public ResponseEntity<OrderResponseDto> getOrderByUser(
             @PathVariable UUID userId,
             @PathVariable UUID orderId) {
         OrderResponseDto order = orderService.findByIdAndUser(userId, orderId);
@@ -37,7 +37,7 @@ public class OrderController {
 
     @GetMapping
     public Page<OrderResponseDto> getAllOrdersFromUser(Pageable pageable) {
-        return orderService.findAll(pageable);
+        return orderService.findAllByUser(pageable);
     }
 
     @PostMapping

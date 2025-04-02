@@ -33,7 +33,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDto save(UserRequestDto createDto) {
+    public UserResponseDto create(UserRequestDto createDto) {
         User userToSave = UserMapper.INSTANCE.toUser(createDto);
         User savedUser = userRepository.save(userToSave);
         return UserMapper.INSTANCE.toDto(savedUser);

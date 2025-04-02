@@ -7,7 +7,6 @@ import com.seucafezinho.api_seu_cafezinho.web.dto.request.CategoryRequestDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.response.CategoryResponseDto;
 import com.seucafezinho.api_seu_cafezinho.web.exception.UniqueViolationException;
 import com.seucafezinho.api_seu_cafezinho.web.mapper.CategoryMapper;
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
-    private final EntityManager entityManager;
 
     @Transactional(readOnly = true)
     public CategoryResponseDto findById(Long id) {

@@ -84,7 +84,7 @@ public class Order implements Serializable {
     }
 
     @PrePersist
-    private void PrePersist() {
+    private void prePersist() {
         this.createdDate = LocalDateTime.now();
     }
 

@@ -63,7 +63,7 @@ public class Product implements Serializable {
     private List<OrderItem> orderItems = new ArrayList<>();
 
     @PrePersist
-    private void PrePersist() {
+    private void prePersist() {
         this.createdDate = LocalDateTime.now();
     }
 
