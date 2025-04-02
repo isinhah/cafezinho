@@ -2,12 +2,14 @@ package com.seucafezinho.api_seu_cafezinho.service.impl;
 
 import com.seucafezinho.api_seu_cafezinho.entity.Order;
 import com.seucafezinho.api_seu_cafezinho.entity.User;
+import com.seucafezinho.api_seu_cafezinho.entity.enums.OrderStatus;
 import com.seucafezinho.api_seu_cafezinho.repository.OrderItemRepository;
 import com.seucafezinho.api_seu_cafezinho.repository.OrderRepository;
 import com.seucafezinho.api_seu_cafezinho.repository.UserRepository;
 import com.seucafezinho.api_seu_cafezinho.service.OrderService;
 import com.seucafezinho.api_seu_cafezinho.util.OrderFactory;
 import com.seucafezinho.api_seu_cafezinho.web.dto.request.OrderRequestDto;
+import com.seucafezinho.api_seu_cafezinho.web.dto.request.OrderStatusUpdateDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.response.OrderResponseDto;
 import com.seucafezinho.api_seu_cafezinho.web.mapper.OrderMapper;
 import jakarta.persistence.EntityNotFoundException;
@@ -29,14 +31,13 @@ public class OrderServiceImpl implements OrderService {
     private final OrderFactory orderFactory;
 
     @Transactional(readOnly = true)
-    public OrderResponseDto findByIdAndUser(UUID userId, UUID orderId) {
-        User user = findUserById(userId);
-        Order order = findOrderByIdAndUser(orderId, user);
+    public OrderResponseDto findById(UUID orderId) {
+        Order order = findOrderById(orderId);
         return OrderMapper.INSTANCE.toDto(order);
     }
 
     @Transactional(readOnly = true)
-    public Page<OrderResponseDto> findAllByUser(Pageable pageable) {
+    public Page<OrderResponseDto> findAll(Pageable pageable) {
         return orderRepository.findAll(pageable)
                 .map(OrderMapper.INSTANCE::toDto);
     }
@@ -55,9 +56,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Transactional
-    public OrderResponseDto updateOrder(UUID userId, UUID orderId, OrderRequestDto orderRequestDto) {
-        User user = findUserById(userId);
-        Order order = findOrderByIdAndUser(orderId, user);
+    public OrderResponseDto updateOrder(UUID orderId, OrderRequestDto orderRequestDto) {
+        Order order = findOrderById(orderId);
 
         orderFactory.updateOrder(order, orderRequestDto);
         order.calculateTotalPrice();
@@ -69,18 +69,34 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Transactional
-    public void delete(UUID userId, UUID orderId) {
-        User user = findUserById(userId);
-        Order order = findOrderByIdAndUser(orderId, user);
+    public OrderResponseDto updateOrderStatus(UUID orderId, OrderStatusUpdateDto statusUpdateDto) {
+        Order order = findOrderById(orderId);
+        OrderStatus newStatus = OrderStatus.valueOf(statusUpdateDto.getStatus());
+
+        if (newStatus == OrderStatus.DELIVERING && order.getAddress() == null) {
+            throw new IllegalStateException("Cannot set status to DELIVERING for orders without an address. The customer must pick up the order.");
+        }
+
+        if (newStatus == OrderStatus.READY_FOR_PICKUP && order.getAddress() != null) {
+            throw new IllegalStateException("Order can only be marked as READY_FOR_PICKUP if no delivery address is set.");
+        }
+
+        order.setStatus(newStatus);
+        Order updatedOrder = orderRepository.save(order);
+
+        return OrderMapper.INSTANCE.toDto(updatedOrder);
+    }
+
+    @Transactional
+    public void delete(UUID orderId) {
+        Order order = findOrderById(orderId);
         orderRepository.delete(order);
     }
 
-    @Transactional(readOnly = true)
-    private Order findOrderByIdAndUser(UUID orderId, User user) {
-        return orderRepository.findByIdAndUser(orderId, user)
+    private Order findOrderById(UUID orderId) {
+        return orderRepository.findById(orderId)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Order with id: '%s' not found for user: '%s'", orderId, user.getId())
-                ));
+                        String.format("Order with id: '%s' not found", orderId)));
     }
 
     @Transactional(readOnly = true)

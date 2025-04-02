@@ -4,8 +4,8 @@ import com.seucafezinho.api_seu_cafezinho.entity.*;
 import com.seucafezinho.api_seu_cafezinho.entity.enums.DeliveryMethod;
 import com.seucafezinho.api_seu_cafezinho.entity.enums.OrderStatus;
 import com.seucafezinho.api_seu_cafezinho.entity.enums.PaymentMethod;
-import com.seucafezinho.api_seu_cafezinho.service.impl.AddressServiceImpl;
-import com.seucafezinho.api_seu_cafezinho.service.impl.ProductServiceImpl;
+import com.seucafezinho.api_seu_cafezinho.service.AddressService;
+import com.seucafezinho.api_seu_cafezinho.service.ProductService;
 import com.seucafezinho.api_seu_cafezinho.web.dto.request.OrderRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderFactory {
 
-    private final ProductServiceImpl productService;
-    private final AddressServiceImpl addressServiceImpl;
+    private final ProductService productService;
+    private final AddressService addressService;
 
     /**
      * Cria um pedido a partir do DTO.
@@ -54,7 +54,7 @@ public class OrderFactory {
      */
     private void setOrderDelivery(Order order, OrderRequestDto orderRequestDto) {
         if ("HOME_DELIVERY".equalsIgnoreCase(orderRequestDto.getDeliveryMethod())) {
-            Address address = addressServiceImpl.findAddressById(orderRequestDto.getAddressId());
+            Address address = addressService.findAddressById(orderRequestDto.getAddressId());
             order.setAddress(address);
         }
     }
