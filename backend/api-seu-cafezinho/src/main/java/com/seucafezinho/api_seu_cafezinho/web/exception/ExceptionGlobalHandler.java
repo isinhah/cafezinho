@@ -3,6 +3,7 @@ package com.seucafezinho.api_seu_cafezinho.web.exception;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,32 @@ public class ExceptionGlobalHandler {
                         request,
                         HttpStatus.NOT_FOUND,
                         ex.getMessage()));
+    }
+
+    @ExceptionHandler(UniqueViolationException.class)
+    public ResponseEntity<ErrorMessage> uniqueViolationException(UniqueViolationException ex,
+                                                                 HttpServletRequest request) {
+        log.error("------ Api Error ------", ex);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(
+                        request,
+                        HttpStatus.BAD_REQUEST,
+                        "Unique constraint violation: " + ex.getMessage()));
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorMessage> illegalArgumentException(IllegalArgumentException ex,
+                                                                 HttpServletRequest request) {
+        log.error("------ Api Error ------", ex);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(
+                        request,
+                        HttpStatus.BAD_REQUEST,
+                        "Invalid argument: " + ex.getMessage()));
     }
 
     @ExceptionHandler(BusinessException.class)

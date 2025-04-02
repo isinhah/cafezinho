@@ -1,6 +1,7 @@
 package com.seucafezinho.api_seu_cafezinho.service.impl;
 
 import com.seucafezinho.api_seu_cafezinho.entity.User;
+import com.seucafezinho.api_seu_cafezinho.producer.UserProducer;
 import com.seucafezinho.api_seu_cafezinho.repository.UserRepository;
 import com.seucafezinho.api_seu_cafezinho.service.UserService;
 import com.seucafezinho.api_seu_cafezinho.web.dto.request.UserRequestDto;
@@ -20,6 +21,7 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final UserProducer userProducer;
 
     @Transactional(readOnly = true)
     public UserResponseDto findById(UUID id) {
@@ -37,6 +39,9 @@ public class UserServiceImpl implements UserService {
     public UserResponseDto create(UserRequestDto createDto) {
         User userToSave = UserMapper.INSTANCE.toUser(createDto);
         User savedUser = userRepository.save(userToSave);
+
+        userProducer.publishMessageEmail(savedUser);
+
         return UserMapper.INSTANCE.toDto(savedUser);
     }
 
