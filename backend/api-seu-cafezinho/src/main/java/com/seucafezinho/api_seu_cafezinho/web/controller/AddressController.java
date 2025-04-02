@@ -22,49 +22,41 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/users/{userId}/addresses")
+@RequestMapping("/api/v1/addresses")
 public class AddressController {
 
     private final AddressService addressService;
 
     @GetMapping("/{addressId}")
-    public ResponseEntity<AddressResponseDto> getAddressByUser(
-            @PathVariable UUID userId,
-            @PathVariable UUID addressId) {
-        AddressResponseDto address = addressService.findByIdAndUser(userId, addressId);
+    public ResponseEntity<AddressResponseDto> getAddressById(@PathVariable UUID addressId) {
+        AddressResponseDto address = addressService.findById(addressId);
         return ResponseEntity.ok(address);
     }
 
-    @GetMapping
+    @GetMapping("/user/{userId}")
     public ResponseEntity<Page<AddressResponseDto>> getAddressesByUser(
-            @PathVariable UUID userId,
-            Pageable pageable) {
+            @PathVariable UUID userId, Pageable pageable) {
         Page<AddressResponseDto> addresses = addressService.findAllByUser(userId, pageable);
         return ResponseEntity.ok(addresses);
     }
 
-    @PostMapping
+    @PostMapping("/user/{userId}")
     public ResponseEntity<AddressResponseDto> createAddress(
-            @PathVariable UUID userId,
-            @Valid @RequestBody AddressRequestDto createDto) {
+            @PathVariable UUID userId, @Valid @RequestBody AddressRequestDto createDto) {
         AddressResponseDto newAddress = addressService.create(createDto, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(newAddress);
     }
 
     @PutMapping("/{addressId}")
     public ResponseEntity<AddressResponseDto> updateAddress(
-            @PathVariable UUID userId,
-            @PathVariable UUID addressId,
-            @Valid @RequestBody AddressRequestDto updateDto) {
-        AddressResponseDto existingAddress = addressService.update(userId, addressId, updateDto);
-        return ResponseEntity.ok(existingAddress);
+            @PathVariable UUID addressId, @Valid @RequestBody AddressRequestDto updateDto) {
+        AddressResponseDto updatedAddress = addressService.update(addressId, updateDto);
+        return ResponseEntity.ok(updatedAddress);
     }
 
     @DeleteMapping("/{addressId}")
-    public ResponseEntity<Void> deleteAddress(
-            @PathVariable UUID userId,
-            @PathVariable UUID addressId) {
-        addressService.delete(userId, addressId);
+    public ResponseEntity<Void> deleteAddress(@PathVariable UUID addressId) {
+        addressService.delete(addressId);
         return ResponseEntity.noContent().build();
     }
 }

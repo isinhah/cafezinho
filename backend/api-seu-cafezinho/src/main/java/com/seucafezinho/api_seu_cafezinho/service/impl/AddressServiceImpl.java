@@ -26,8 +26,8 @@ public class AddressServiceImpl implements AddressService {
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    public AddressResponseDto findByIdAndUser(UUID userId, UUID addressId) {
-        Address address = findAddressByIdAndUser(addressId, userId);
+    public AddressResponseDto findById(UUID addressId) {
+        Address address = findAddressById(addressId);
         return AddressMapper.INSTANCE.toDto(address);
     }
 
@@ -40,46 +40,38 @@ public class AddressServiceImpl implements AddressService {
     @Transactional
     public AddressResponseDto create(AddressRequestDto createDto, UUID userId) {
         User user = findUserById(userId);
+
+        if (addressRepository.existsByUserIdAndStreetIgnoreCase(userId, createDto.getStreet())) {
+            throw new UniqueViolationException(
+                    String.format("Another address with the street name: '%s' already exists for this user", createDto.getStreet())
+            );
+        }
+
         Address address = AddressMapper.INSTANCE.toEntity(createDto, user);
         Address savedAddress = addressRepository.save(address);
         return AddressMapper.INSTANCE.toDto(savedAddress);
     }
 
     @Transactional
-    public AddressResponseDto update(UUID userId, UUID addressId, AddressRequestDto updateDto) {
-        Address existingAddress = findAddressByIdAndUser(addressId, userId);
+    public AddressResponseDto update(UUID addressId, AddressRequestDto updateDto) {
+        Address existingAddress = findAddressById(addressId);
 
         if (!existingAddress.getStreet().equalsIgnoreCase(updateDto.getStreet()) &&
-                addressRepository.existsByUserIdAndStreetIgnoreCase(userId, updateDto.getStreet())) {
-            throw new UniqueViolationException(String.format("Another address with the street name: '%s' already exists for this user", updateDto.getStreet()));
+                addressRepository.existsByUserIdAndStreetIgnoreCase(existingAddress.getUser().getId(), updateDto.getStreet())) {
+            throw new UniqueViolationException(
+                    String.format("Another address with the street name: '%s' already exists for this user", updateDto.getStreet())
+            );
         }
 
         AddressMapper.INSTANCE.updateAddressFromDto(updateDto, existingAddress);
-
         Address updatedAddress = addressRepository.save(existingAddress);
         return AddressMapper.INSTANCE.toDto(updatedAddress);
     }
 
     @Transactional
-    public void delete(UUID userId, UUID addressId) {
-        Address address = findAddressByIdAndUser(addressId, userId);
+    public void delete(UUID addressId) {
+        Address address = findAddressById(addressId);
         addressRepository.delete(address);
-    }
-
-    @Transactional(readOnly = true)
-    private Address findAddressByIdAndUser(UUID addressId, UUID userId) {
-        return addressRepository.findByIdAndUserId(addressId, userId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Address with id: '%s' not found for user: '%s'", addressId, userId)
-                ));
-    }
-
-    @Transactional(readOnly = true)
-    private User findUserById(UUID userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("User with id: '%s' not found", userId)
-                ));
     }
 
     @Transactional(readOnly = true)
@@ -87,6 +79,14 @@ public class AddressServiceImpl implements AddressService {
         return addressRepository.findById(addressId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Address with id: '%s' not found", addressId)
+                ));
+    }
+
+    @Transactional(readOnly = true)
+    public User findUserById(UUID userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("User with id: '%s' not found", userId)
                 ));
     }
 }
