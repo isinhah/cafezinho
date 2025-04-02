@@ -1,7 +1,7 @@
 package com.seucafezinho.api_seu_cafezinho.web.controller;
 
 import com.seucafezinho.api_seu_cafezinho.service.CategoryService;
-import com.seucafezinho.api_seu_cafezinho.service.ProductService;
+import com.seucafezinho.api_seu_cafezinho.service.impl.ProductServiceImpl;
 import com.seucafezinho.api_seu_cafezinho.web.dto.request.CategoryRequestDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.response.CategoryResponseDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.response.ProductResponseDto;
@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CategoryController {
 
     private final CategoryService categoryService;
-    private final ProductService productService;
+    private final ProductServiceImpl productService;
 
     @GetMapping("/{id}")
     public ResponseEntity<CategoryResponseDto> getCategoryById(@PathVariable Long id) {
