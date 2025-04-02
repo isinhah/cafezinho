@@ -14,6 +14,8 @@ public interface OrderService {
 
     Page<OrderResponseDto> findAll(Pageable pageable);
 
+    Page<OrderResponseDto> findAllByUserId(UUID userId, Pageable pageable);
+
     OrderResponseDto createOrder(UUID userId, OrderRequestDto orderRequestDto);
 
     OrderResponseDto updateOrder(UUID orderId, OrderRequestDto orderRequestDto);

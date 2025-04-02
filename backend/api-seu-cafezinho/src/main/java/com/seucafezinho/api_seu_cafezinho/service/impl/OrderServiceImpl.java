@@ -42,6 +42,12 @@ public class OrderServiceImpl implements OrderService {
                 .map(OrderMapper.INSTANCE::toDto);
     }
 
+    @Transactional(readOnly = true)
+    public Page<OrderResponseDto> findAllByUserId(UUID userId, Pageable pageable) {
+        return orderRepository.findAllByUserId(userId, pageable)
+                .map(OrderMapper.INSTANCE::toDto);
+    }
+
     @Transactional
     public OrderResponseDto createOrder(UUID userId, OrderRequestDto orderRequestDto) {
         User user = findUserById(userId);

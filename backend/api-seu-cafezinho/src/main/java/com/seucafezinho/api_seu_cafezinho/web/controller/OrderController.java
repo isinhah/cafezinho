@@ -40,6 +40,13 @@ public class OrderController {
         return orderService.findAll(pageable);
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<Page<OrderResponseDto>> getAllOrdersByUserId(
+            @PathVariable UUID userId, Pageable pageable) {
+        Page<OrderResponseDto> orders = orderService.findAllByUserId(userId, pageable);
+        return ResponseEntity.ok(orders);
+    }
+
     @PostMapping("/{userId}")
     public ResponseEntity<OrderResponseDto> createOrder(
             @PathVariable UUID userId,
