@@ -1,0 +1,14 @@
+server:
+  port: 8083
+
+rabbitmq:
+  addresses: amqps://auaosgzi:OPbQCwE4q9NQCZgB3-pMJ5CmxyUCkANh@crow.rmq.cloudamqp.com/auaosgzi
+
+broker:
+  queue:
+    email:
+      name: sms.notification
+
+aws:
+  accessKey: ${AWS_ACCESS_KEY}
+  secretKey: ${AWS_SECRET_KEY}
