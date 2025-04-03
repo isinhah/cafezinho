@@ -2,6 +2,7 @@ package com.seucafezinho.api_seu_cafezinho.web.controller;
 
 import com.seucafezinho.api_seu_cafezinho.service.UserService;
 import com.seucafezinho.api_seu_cafezinho.web.dto.request.UserRequestDto;
+import com.seucafezinho.api_seu_cafezinho.web.dto.response.CustomPageResponse;
 import com.seucafezinho.api_seu_cafezinho.web.dto.response.UserResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,8 +35,9 @@ public class UserController {
     }
 
     @GetMapping
-    public Page<UserResponseDto> getAllUsers(Pageable pageable) {
-        return userService.findAll(pageable);
+    public ResponseEntity<CustomPageResponse<UserResponseDto>> getAllUsers(Pageable pageable) {
+        Page<UserResponseDto> page = userService.findAll(pageable);
+        return ResponseEntity.ok(new CustomPageResponse<>(page));
     }
 
     @PostMapping

@@ -4,6 +4,7 @@ import com.seucafezinho.api_seu_cafezinho.service.CategoryService;
 import com.seucafezinho.api_seu_cafezinho.service.impl.ProductServiceImpl;
 import com.seucafezinho.api_seu_cafezinho.web.dto.request.CategoryRequestDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.response.CategoryResponseDto;
+import com.seucafezinho.api_seu_cafezinho.web.dto.response.CustomPageResponse;
 import com.seucafezinho.api_seu_cafezinho.web.dto.response.ProductResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -36,8 +37,9 @@ public class CategoryController {
     }
 
     @GetMapping
-    public Page<CategoryResponseDto> getAllCategories(Pageable pageable) {
-        return categoryService.findAll(pageable);
+    public ResponseEntity<CustomPageResponse<CategoryResponseDto>> getAllCategories(Pageable pageable) {
+        Page<CategoryResponseDto> page = categoryService.findAll(pageable);
+        return ResponseEntity.ok(new CustomPageResponse<>(page));
     }
 
     @GetMapping("/search")
@@ -47,10 +49,10 @@ public class CategoryController {
     }
 
     @GetMapping("/{categoryId}/products")
-    public ResponseEntity<Page<ProductResponseDto>> getProductsByCategory(
+    public ResponseEntity<CustomPageResponse<ProductResponseDto>> getProductsByCategory(
             @PathVariable Long categoryId, Pageable pageable) {
-        Page<ProductResponseDto> products = productService.findAllByCategory(categoryId, pageable);
-        return ResponseEntity.ok(products);
+        Page<ProductResponseDto> page = productService.findAllByCategory(categoryId, pageable);
+        return ResponseEntity.ok(new CustomPageResponse<>(page));
     }
 
     @PostMapping("/{categoryId}/products/{productId}")

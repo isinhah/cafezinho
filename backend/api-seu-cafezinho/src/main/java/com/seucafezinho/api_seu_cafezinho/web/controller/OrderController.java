@@ -3,6 +3,7 @@ package com.seucafezinho.api_seu_cafezinho.web.controller;
 import com.seucafezinho.api_seu_cafezinho.service.OrderService;
 import com.seucafezinho.api_seu_cafezinho.web.dto.request.OrderRequestDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.request.OrderStatusUpdateDto;
+import com.seucafezinho.api_seu_cafezinho.web.dto.response.CustomPageResponse;
 import com.seucafezinho.api_seu_cafezinho.web.dto.response.OrderResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -36,15 +37,16 @@ public class OrderController {
     }
 
     @GetMapping
-    public Page<OrderResponseDto> getAllOrders(Pageable pageable) {
-        return orderService.findAll(pageable);
+    public ResponseEntity<CustomPageResponse<OrderResponseDto>> getAllOrders(Pageable pageable) {
+        Page<OrderResponseDto> page = orderService.findAll(pageable);
+        return ResponseEntity.ok(new CustomPageResponse<>(page));
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<Page<OrderResponseDto>> getAllOrdersByUserId(
+    public ResponseEntity<CustomPageResponse<OrderResponseDto>> getAllOrdersByUser(
             @PathVariable UUID userId, Pageable pageable) {
-        Page<OrderResponseDto> orders = orderService.findAllByUserId(userId, pageable);
-        return ResponseEntity.ok(orders);
+        Page<OrderResponseDto> page = orderService.findAllByUserId(userId, pageable);
+        return ResponseEntity.ok(new CustomPageResponse<>(page));
     }
 
     @PostMapping("/{userId}")

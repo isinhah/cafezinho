@@ -3,6 +3,7 @@ package com.seucafezinho.api_seu_cafezinho.web.controller;
 import com.seucafezinho.api_seu_cafezinho.service.AddressService;
 import com.seucafezinho.api_seu_cafezinho.web.dto.request.AddressRequestDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.response.AddressResponseDto;
+import com.seucafezinho.api_seu_cafezinho.web.dto.response.CustomPageResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -34,10 +35,10 @@ public class AddressController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<Page<AddressResponseDto>> getAddressesByUser(
+    public ResponseEntity<CustomPageResponse<AddressResponseDto>> getAddressesByUser(
             @PathVariable UUID userId, Pageable pageable) {
-        Page<AddressResponseDto> addresses = addressService.findAllByUser(userId, pageable);
-        return ResponseEntity.ok(addresses);
+        Page<AddressResponseDto> page = addressService.findAllByUser(userId, pageable);
+        return ResponseEntity.ok(new CustomPageResponse<>(page));
     }
 
     @PostMapping("/user/{userId}")

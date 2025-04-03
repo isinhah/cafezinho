@@ -2,6 +2,7 @@ package com.seucafezinho.api_seu_cafezinho.web.controller;
 
 import com.seucafezinho.api_seu_cafezinho.service.ProductService;
 import com.seucafezinho.api_seu_cafezinho.web.dto.request.ProductRequestDto;
+import com.seucafezinho.api_seu_cafezinho.web.dto.response.CustomPageResponse;
 import com.seucafezinho.api_seu_cafezinho.web.dto.response.ProductResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,8 +33,9 @@ public class ProductController {
     }
 
     @GetMapping
-    public Page<ProductResponseDto> getAllProducts(Pageable pageable) {
-        return productService.findAll(pageable);
+    public ResponseEntity<CustomPageResponse<ProductResponseDto>> getAllProducts(Pageable pageable) {
+        Page<ProductResponseDto> page = productService.findAll(pageable);
+        return ResponseEntity.ok(new CustomPageResponse<>(page));
     }
 
     @PostMapping
