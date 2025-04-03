@@ -12,7 +12,7 @@ public class EmailProducer {
     private final RabbitTemplate rabbitTemplate;
     private final String routingKey;
 
-    public EmailProducer(RabbitTemplate rabbitTemplate, @Value("${broker.queues.email.name}") String routingKey) {
+    public EmailProducer(RabbitTemplate rabbitTemplate, @Value("${spring.rabbitmq.queues.email.name}") String routingKey) {
         this.rabbitTemplate = rabbitTemplate;
         this.routingKey = routingKey;
     }
@@ -21,8 +21,10 @@ public class EmailProducer {
         var emailDto = new EmailDto();
         emailDto.setUserId(user.getId());
         emailDto.setEmailTo(user.getEmail());
-        emailDto.setSubject("Cadastro realizado com sucesso");
-        emailDto.setText(user.getName() + ", seja bem-vindo(a)! \nNós agradecemos o seu cadastro, aproveite todos os recursos da nossa plataforma!");
+        emailDto.setSubject("Seja bem-vindo(a) ao nosso café! ☕🍰");
+        emailDto.setText("Olá " + user.getName() + ",\n\n" +
+                "É um prazer ter você conosco! Fique à vontade para explorar nosso cardápio e fazer seu primeiro pedido. Qual será sua escolha hoje? 😋\n\n" +
+                "Aproveite e bom apetite!\n\n");
 
         rabbitTemplate.convertAndSend(routingKey, emailDto);
     }

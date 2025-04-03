@@ -12,7 +12,7 @@ public class SmsProducer {
     private final RabbitTemplate rabbitTemplate;
     private final String routingKey;
 
-    public SmsProducer(RabbitTemplate rabbitTemplate, @Value("${broker.queues.sms.name}") String routingKey) {
+    public SmsProducer(RabbitTemplate rabbitTemplate, @Value("${spring.rabbitmq.queues.sms.name}") String routingKey) {
         this.rabbitTemplate = rabbitTemplate;
         this.routingKey = routingKey;
     }

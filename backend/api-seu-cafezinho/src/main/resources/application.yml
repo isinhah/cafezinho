@@ -17,11 +17,9 @@ spring:
                 format_sql: true
         database-platform: org.hibernate.dialect.H2Dialect
     rabbitmq:
-        addresses: amqps://auaosgzi:OPbQCwE4q9NQCZgB3-pMJ5CmxyUCkANh@crow.rmq.cloudamqp.com/auaosgzi
-
-broker:
-    queues:
-        email:
-            name: email.notification
-        sms:
-            name: sms.notification
+        addresses: ${RABBITMQ_ADDRESSES}
+        queues:
+            email:
+                name: email.notification
+            sms:
+                name: sms.notification
