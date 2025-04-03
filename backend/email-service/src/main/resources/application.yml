@@ -9,10 +9,11 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-
   rabbitmq:
-    addresses: amqps://auaosgzi:OPbQCwE4q9NQCZgB3-pMJ5CmxyUCkANh@crow.rmq.cloudamqp.com/auaosgzi
-
+    addresses: ${RABBITMQ_ADDRESSES}
+    queue:
+      email:
+        name: email.notification
   mail:
     host: smtp.gmail.com
     port: 587
@@ -21,8 +22,3 @@ spring:
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
-
-broker:
-  queue:
-    email:
-      name: email.notification
