@@ -21,8 +21,8 @@ public class UserRequestDto {
 
     @NotBlank(message = "Phone number cannot be empty")
     @Pattern(
-            regexp = "^[0-9]{10,16}$",
-            message = "Phone number must contain only numbers and be between 10 and 16 digits"
+            regexp = "^\\+[1-9]\\d{9,14}$",
+            message = "Phone number must be in E.164 format (e.g., +5511922223333)"
     )
     private String phone;
 

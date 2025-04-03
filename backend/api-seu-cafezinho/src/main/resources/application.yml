@@ -20,6 +20,8 @@ spring:
         addresses: amqps://auaosgzi:OPbQCwE4q9NQCZgB3-pMJ5CmxyUCkANh@crow.rmq.cloudamqp.com/auaosgzi
 
 broker:
-    queue:
+    queues:
         email:
             name: email.notification
+        sms:
+            name: sms.notification

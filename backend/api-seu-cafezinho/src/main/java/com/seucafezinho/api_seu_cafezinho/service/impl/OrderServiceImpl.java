@@ -3,6 +3,7 @@ package com.seucafezinho.api_seu_cafezinho.service.impl;
 import com.seucafezinho.api_seu_cafezinho.entity.Order;
 import com.seucafezinho.api_seu_cafezinho.entity.User;
 import com.seucafezinho.api_seu_cafezinho.entity.enums.OrderStatus;
+import com.seucafezinho.api_seu_cafezinho.producer.SmsProducer;
 import com.seucafezinho.api_seu_cafezinho.repository.OrderItemRepository;
 import com.seucafezinho.api_seu_cafezinho.repository.OrderRepository;
 import com.seucafezinho.api_seu_cafezinho.repository.UserRepository;
@@ -29,6 +30,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemRepository orderItemRepository;
     private final UserRepository userRepository;
     private final OrderFactory orderFactory;
+    private final SmsProducer smsProducer;
 
     @Transactional(readOnly = true)
     public OrderResponseDto findById(UUID orderId) {
@@ -58,6 +60,8 @@ public class OrderServiceImpl implements OrderService {
         Order savedOrder = orderRepository.save(order);
         orderItemRepository.saveAll(order.getOrderItems());
 
+        smsProducer.publishOrderSms(savedOrder);
+
         return OrderMapper.INSTANCE.toDto(savedOrder);
     }
 
@@ -70,6 +74,8 @@ public class OrderServiceImpl implements OrderService {
 
         Order updatedOrder = orderRepository.save(order);
         orderItemRepository.saveAll(order.getOrderItems());
+
+        smsProducer.publishOrderSms(updatedOrder);
 
         return OrderMapper.INSTANCE.toDto(updatedOrder);
     }
@@ -89,6 +95,8 @@ public class OrderServiceImpl implements OrderService {
 
         order.setStatus(newStatus);
         Order updatedOrder = orderRepository.save(order);
+
+        smsProducer.publishOrderSms(updatedOrder);
 
         return OrderMapper.INSTANCE.toDto(updatedOrder);
     }

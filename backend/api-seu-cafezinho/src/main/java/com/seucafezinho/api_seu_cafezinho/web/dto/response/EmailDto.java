@@ -1,4 +1,4 @@
-package com.seucafezinho.api_seu_cafezinho.web.dto.request;
+package com.seucafezinho.api_seu_cafezinho.web.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
