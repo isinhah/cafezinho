@@ -1,5 +1,6 @@
 package com.seucafezinho.api_seu_cafezinho.web.controller;
 
+import com.seucafezinho.api_seu_cafezinho.documentation.OrderControllerDocs;
 import com.seucafezinho.api_seu_cafezinho.service.OrderService;
 import com.seucafezinho.api_seu_cafezinho.web.dto.request.OrderRequestDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.request.OrderStatusUpdateDto;
@@ -26,7 +27,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/orders")
-public class OrderController {
+public class OrderController implements OrderControllerDocs {
 
     private final OrderService orderService;
 

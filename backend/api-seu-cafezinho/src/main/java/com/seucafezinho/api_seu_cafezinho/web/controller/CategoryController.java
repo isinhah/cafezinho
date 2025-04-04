@@ -1,5 +1,6 @@
 package com.seucafezinho.api_seu_cafezinho.web.controller;
 
+import com.seucafezinho.api_seu_cafezinho.documentation.CategoryControllerDocs;
 import com.seucafezinho.api_seu_cafezinho.service.CategoryService;
 import com.seucafezinho.api_seu_cafezinho.service.impl.ProductServiceImpl;
 import com.seucafezinho.api_seu_cafezinho.web.dto.request.CategoryRequestDto;
@@ -25,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/categories")
-public class CategoryController {
+public class CategoryController implements CategoryControllerDocs {
 
     private final CategoryService categoryService;
     private final ProductServiceImpl productService;

@@ -1,5 +1,6 @@
 package com.seucafezinho.api_seu_cafezinho.web.controller;
 
+import com.seucafezinho.api_seu_cafezinho.documentation.AddressControllerDocs;
 import com.seucafezinho.api_seu_cafezinho.service.AddressService;
 import com.seucafezinho.api_seu_cafezinho.web.dto.request.AddressRequestDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.response.AddressResponseDto;
@@ -24,7 +25,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/addresses")
-public class AddressController {
+public class AddressController implements AddressControllerDocs {
 
     private final AddressService addressService;
 

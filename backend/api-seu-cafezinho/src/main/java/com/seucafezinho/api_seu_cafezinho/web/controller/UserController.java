@@ -1,5 +1,6 @@
 package com.seucafezinho.api_seu_cafezinho.web.controller;
 
+import com.seucafezinho.api_seu_cafezinho.documentation.UserControllerDocs;
 import com.seucafezinho.api_seu_cafezinho.service.UserService;
 import com.seucafezinho.api_seu_cafezinho.web.dto.request.UserRequestDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.response.CustomPageResponse;
@@ -24,7 +25,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/users")
-public class UserController {
+public class UserController implements UserControllerDocs {
 
     private final UserService userService;
 

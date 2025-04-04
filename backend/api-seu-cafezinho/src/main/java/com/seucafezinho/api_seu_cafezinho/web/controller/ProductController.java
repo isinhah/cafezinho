@@ -1,5 +1,6 @@
 package com.seucafezinho.api_seu_cafezinho.web.controller;
 
+import com.seucafezinho.api_seu_cafezinho.documentation.ProductControllerDocs;
 import com.seucafezinho.api_seu_cafezinho.service.ProductService;
 import com.seucafezinho.api_seu_cafezinho.web.dto.request.ProductRequestDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.response.CustomPageResponse;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/products")
-public class ProductController {
+public class ProductController implements ProductControllerDocs {
 
     private final ProductService productService;
 
