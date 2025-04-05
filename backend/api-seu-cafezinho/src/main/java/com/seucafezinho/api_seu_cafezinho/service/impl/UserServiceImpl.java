@@ -37,6 +37,10 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public UserResponseDto create(UserRequestDto createDto) {
+        if (userRepository.existsByEmail(createDto.getEmail())) {
+            throw new IllegalArgumentException("This email is already registered.");
+        }
+
         User userToSave = UserMapper.INSTANCE.toUser(createDto);
         User savedUser = userRepository.save(userToSave);
 
