@@ -21,7 +21,7 @@
 </details>
 <details>
     <summary><b>Exemplo: SMS enviado.</b></summary>
-    <img src="assets/sms-exemplo.jpg" alt="Exemplo de SMS">
+    <img src="assets/sms-exemplo.jpg" alt="Exemplo de SMS" height="400">
 </details>
 
 ## Tecnologias
