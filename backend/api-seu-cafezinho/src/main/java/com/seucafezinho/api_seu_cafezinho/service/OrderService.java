@@ -1,5 +1,7 @@
 package com.seucafezinho.api_seu_cafezinho.service;
 
+import com.seucafezinho.api_seu_cafezinho.entity.Order;
+import com.seucafezinho.api_seu_cafezinho.entity.User;
 import com.seucafezinho.api_seu_cafezinho.web.dto.request.OrderRequestDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.request.OrderStatusUpdateDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.response.OrderResponseDto;

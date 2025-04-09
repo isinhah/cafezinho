@@ -19,3 +19,12 @@ spring:
                 name: email.notification
             sms:
                 name: sms.notification
+
+api:
+    security:
+        token:
+            secret: my-secret-key
+
+cors:
+    allowed:
+        origins: http://localhost:8080

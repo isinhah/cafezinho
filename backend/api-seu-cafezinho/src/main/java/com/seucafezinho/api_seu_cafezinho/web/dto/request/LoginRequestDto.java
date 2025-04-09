@@ -14,7 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "DTO para login do usuário cadastrado no sistema")
-public class UserLoginDto {
+public class LoginRequestDto {
 
     @NotBlank(message = "Email cannot be empty")
     @Email(message = "Email format is invalid", regexp = "^[a-z0-9.+-_]+@[a-z0-9.-]+\\.[a-z]{2,}$")
