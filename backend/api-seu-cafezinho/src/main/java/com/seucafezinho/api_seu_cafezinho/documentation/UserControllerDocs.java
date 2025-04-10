@@ -21,9 +21,6 @@ public interface UserControllerDocs {
     @Operation(summary = "Listar todos os usuários", description = "Retorna uma página contendo todos os usuários cadastrados")
     ResponseEntity<CustomPageResponse<UserResponseDto>> getAllUsers(Pageable pageable);
 
-    @Operation(summary = "Criar um novo usuário", description = "Cria um novo usuário no sistema")
-    ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserRequestDto createDto);
-
     @Operation(summary = "Atualizar usuário", description = "Modifica os dados de um usuário existente")
     ResponseEntity<UserResponseDto> alterUser(
             @PathVariable UUID id,

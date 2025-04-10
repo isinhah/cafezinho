@@ -41,12 +41,6 @@ public class UserController implements UserControllerDocs {
         return ResponseEntity.ok(new CustomPageResponse<>(page));
     }
 
-    @PostMapping
-    public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserRequestDto createDto) {
-        UserResponseDto newUser = userService.create(createDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
-    }
-
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDto> alterUser(
             @PathVariable UUID id,
