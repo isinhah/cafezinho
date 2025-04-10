@@ -2,6 +2,8 @@ package com.seucafezinho.api_seu_cafezinho.util;
 
 import com.seucafezinho.api_seu_cafezinho.entity.Category;
 import com.seucafezinho.api_seu_cafezinho.entity.Product;
+import com.seucafezinho.api_seu_cafezinho.web.dto.request.ProductRequestDto;
+import com.seucafezinho.api_seu_cafezinho.web.dto.response.ProductResponseDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -28,5 +30,21 @@ public class ProductConstants {
             PRODUCT_UPDATED_DATE,
             PRODUCT_CATEGORY,
             null
+    );
+
+    public static final ProductRequestDto PRODUCT_REQUEST_DTO = new ProductRequestDto(
+            PRODUCT_NAME,
+            PRODUCT_IMAGE_URL,
+            PRODUCT_DESCRIPTION,
+            PRODUCT_PRICE
+    );
+
+    public static final ProductResponseDto PRODUCT_RESPONSE_DTO = new ProductResponseDto(
+            PRODUCT_ID,
+            PRODUCT_CATEGORY.getId(),
+            PRODUCT_NAME,
+            PRODUCT_IMAGE_URL,
+            PRODUCT_DESCRIPTION,
+            PRODUCT_PRICE
     );
 }

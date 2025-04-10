@@ -67,8 +67,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponseDto update(Long productId, ProductRequestDto updateDto) {
         Product existingProduct = findProductById(productId);
 
-        if (productRepository.existsByNameIgnoreCase(updateDto.getName())
-                && !existingProduct.getName().equalsIgnoreCase(updateDto.getName())) {
+        if (productRepository.existsByNameIgnoreCaseAndIdNot(updateDto.getName(), productId)) {
             throw new UniqueViolationException(String.format("Another product with the name: '%s' already exists", updateDto.getName()));
         }
 
