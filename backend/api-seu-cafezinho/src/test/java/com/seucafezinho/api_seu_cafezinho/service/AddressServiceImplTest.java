@@ -52,7 +52,7 @@ public class AddressServiceImplTest {
     }
 
     @AfterEach
-    void cleanup() {
+    void clearSecurityContext() {
         SecurityContextTestUtil.clear();
     }
 

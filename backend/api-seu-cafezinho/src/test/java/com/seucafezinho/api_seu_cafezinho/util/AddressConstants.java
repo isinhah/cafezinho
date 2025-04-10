@@ -1,10 +1,12 @@
 package com.seucafezinho.api_seu_cafezinho.util;
 
+import com.seucafezinho.api_seu_cafezinho.entity.Address;
 import com.seucafezinho.api_seu_cafezinho.web.dto.request.AddressRequestDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.response.AddressResponseDto;
 
 import java.util.UUID;
 
+import static com.seucafezinho.api_seu_cafezinho.util.UserConstants.USER;
 import static com.seucafezinho.api_seu_cafezinho.util.UserConstants.USER_ID;
 
 public class AddressConstants {
@@ -20,4 +22,12 @@ public class AddressConstants {
 
     public static final AddressResponseDto ADDRESS_RESPONSE_DTO =
             new AddressResponseDto(ADDRESS_ID, USER_ID, STREET, NUMBER, NEIGHBORHOOD);
+
+    public static final Address ADDRESS = new Address(
+            ADDRESS_ID,
+            STREET,
+            NUMBER,
+            NEIGHBORHOOD,
+            USER
+    );
 }
