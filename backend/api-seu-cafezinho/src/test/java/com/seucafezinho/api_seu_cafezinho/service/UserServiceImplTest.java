@@ -9,6 +9,8 @@ import com.seucafezinho.api_seu_cafezinho.util.UserConstants;
 import com.seucafezinho.api_seu_cafezinho.web.dto.response.UserResponseDto;
 import com.seucafezinho.api_seu_cafezinho.web.mapper.UserMapper;
 import jakarta.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -45,10 +47,18 @@ public class UserServiceImplTest {
     @InjectMocks
     private UserServiceImpl userService;
 
+    @BeforeEach
+    void setupSecurityContext() {
+        SecurityContextTestUtil.mockAuthenticatedUser(UserConstants.USER_ID.toString());
+    }
+
+    @AfterEach
+    void clearSecurityContext() {
+        SecurityContextTestUtil.clear();
+    }
+
     @Test
     void findById_ShouldReturnUserResponseDto_WhenSuccessful() {
-        SecurityContextTestUtil.mockAuthenticatedUser(UserConstants.USER_ID.toString());
-
         User user = UserMapper.INSTANCE.toUser(UserConstants.USER_REQUEST_DTO);
         user.setId(UserConstants.USER_ID);
 
@@ -62,21 +72,15 @@ public class UserServiceImplTest {
                 .isEqualTo(UserConstants.USER_RESPONSE_DTO);
 
         verify(userRepository).findById(UserConstants.USER_ID);
-
-        SecurityContextTestUtil.clear();
     }
 
     @Test
     void findById_ShouldThrowEntityNotFoundException_WhenUserNotFound() {
-        SecurityContextTestUtil.mockAuthenticatedUser(UserConstants.USER_ID.toString());
-
         when(userRepository.findById(UserConstants.USER_ID))
                 .thenReturn(Optional.empty());
 
         org.junit.jupiter.api.Assertions.assertThrows(EntityNotFoundException.class, () ->
                 userService.findById(UserConstants.USER_ID));
-
-        SecurityContextTestUtil.clear();
     }
 
     @Test
@@ -130,8 +134,6 @@ public class UserServiceImplTest {
 
     @Test
     void update_ShouldReturnUserResponseDto_WhenSuccessful() {
-        SecurityContextTestUtil.mockAuthenticatedUser(UserConstants.USER_ID.toString());
-
         User existingUser = UserMapper.INSTANCE.toUser(UserConstants.USER_REQUEST_DTO);
         existingUser.setId(UserConstants.USER_ID);
 
@@ -147,27 +149,19 @@ public class UserServiceImplTest {
         verify(userRepository).findById(UserConstants.USER_ID);
         verify(passwordEncoder).encode(anyString());
         verify(userRepository).save(any(User.class));
-
-        SecurityContextTestUtil.clear();
     }
 
     @Test
     void update_ShouldThrowEntityNotFoundException_WhenUserNotFound() {
-        SecurityContextTestUtil.mockAuthenticatedUser(UserConstants.USER_ID.toString());
-
         when(userRepository.findById(UserConstants.USER_ID))
                 .thenReturn(Optional.empty());
 
         org.junit.jupiter.api.Assertions.assertThrows(EntityNotFoundException.class, () ->
                 userService.update(UserConstants.USER_ID, UserConstants.USER_REQUEST_DTO));
-
-        SecurityContextTestUtil.clear();
     }
 
     @Test
     void delete_ShouldRemoveUser_WhenSuccessful() {
-        SecurityContextTestUtil.mockAuthenticatedUser(UserConstants.USER_ID.toString());
-
         User user = UserMapper.INSTANCE.toUser(UserConstants.USER_REQUEST_DTO);
         user.setId(UserConstants.USER_ID);
 
@@ -177,20 +171,14 @@ public class UserServiceImplTest {
         userService.delete(UserConstants.USER_ID);
 
         verify(userRepository).delete(user);
-
-        SecurityContextTestUtil.clear();
     }
 
     @Test
     void delete_ShouldThrowEntityNotFoundException_WhenUserNotFound() {
-        SecurityContextTestUtil.mockAuthenticatedUser(UserConstants.USER_ID.toString());
-
         when(userRepository.findById(UserConstants.USER_ID))
                 .thenReturn(Optional.empty());
 
         org.junit.jupiter.api.Assertions.assertThrows(EntityNotFoundException.class, () ->
                 userService.delete(UserConstants.USER_ID));
-
-        SecurityContextTestUtil.clear();
     }
 }
