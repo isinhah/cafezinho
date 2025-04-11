@@ -32,7 +32,8 @@
 - **Migrations**: Flyway
 - **Conversão de Objetos**: Mapstruct
 - **Anotações**: Lombok
-- **Autenticação**: JWT (JSON Web Token)  
+- **Autenticação**: JWT (JSON Web Token)
+- **Testes Unitários**: JUnit e Mockito
 - **Mensageria**: RabbitMQ
 - **Broker na Nuvem**: Cloud AMQP
 - **Serviço de SMS**: Amazon SNS
