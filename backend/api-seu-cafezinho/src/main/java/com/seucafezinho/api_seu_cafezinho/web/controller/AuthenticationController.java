@@ -7,6 +7,7 @@ import com.seucafezinho.api_seu_cafezinho.web.dto.request.UserRequestDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.response.TokenResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +24,7 @@ public class AuthenticationController implements AuthenticationControllerDocs {
     @PostMapping("/register")
     public ResponseEntity<TokenResponseDto> register(@RequestBody @Valid UserRequestDto registerDto) {
         TokenResponseDto tokenResponse = authenticationService.register(registerDto);
-        return ResponseEntity.ok(tokenResponse);
+        return ResponseEntity.status(HttpStatus.CREATED).body(tokenResponse);
     }
 
     @PostMapping("/login")
