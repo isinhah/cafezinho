@@ -4,9 +4,20 @@
 
 ## Descrição
 
-- Sistema para gerenciamento de um café, com integração a dois microsserviços responsáveis por comunicação com o cliente:
-    - **email-service**: envia e-mails de boas-vindas via SMTP (Gmail)
-    - **sms-service**: envia SMS com atualizações de pedido via AWS SNS (Simple Notification Service)
+Sistema para gerenciamento de um café, com integração a dois microsserviços responsáveis por comunicação com o cliente:
+- **email-service**: envia e-mails de boas-vindas via SMTP (Gmail)
+- **sms-service**: envia SMS com atualizações de pedido via AWS SNS (Simple Notification Service)
+
+## Imagens do Projeto
+
+<details>
+    <summary><b>Envio de Email</b></summary>
+    <img src="assets/email-exemplo.png" alt="Exemplo do Email">
+</details>
+<details>
+    <summary><b>Envio de SMS</b></summary>
+    <img src="assets/sms-exemplo.jpg" alt="Exemplo de SMS" height="400">
+</details>
 
 ## Fluxo dos Microsserviços
 1. O usuário é criado.
@@ -14,15 +25,6 @@
 3. Um pedido é criado pelo usuário.
 4. O status do pedido é atualizado pelo admin.
 5. Um SMS é enviado ao usuário com a atualização do pedido (**sms-service**).
-
-<details>
-    <summary><b>Exemplo: Email enviado.</b></summary>
-    <img src="assets/email-exemplo.png" alt="Exemplo do Email">
-</details>
-<details>
-    <summary><b>Exemplo: SMS enviado.</b></summary>
-    <img src="assets/sms-exemplo.jpg" alt="Exemplo de SMS" height="400">
-</details>
 
 ## Tecnologias
 - **Linguagem**: Java
