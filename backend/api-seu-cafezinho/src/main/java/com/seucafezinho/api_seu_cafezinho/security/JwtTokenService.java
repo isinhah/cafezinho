@@ -1,6 +1,5 @@
 package com.seucafezinho.api_seu_cafezinho.security;
 
-
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.seucafezinho.api_seu_cafezinho.entity.User;
@@ -32,6 +31,16 @@ public class JwtTokenService {
                 .sign(algorithm);
     }
 
+    public boolean isTokenValid(String token) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            JWT.require(algorithm).build().verify(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public UUID getUserIdFromToken(String token) {
         Algorithm algorithm = Algorithm.HMAC256(secret);
         String subject = JWT.require(algorithm)
@@ -41,14 +50,13 @@ public class JwtTokenService {
         return UUID.fromString(subject);
     }
 
-    public boolean isTokenValid(String token) {
-        try {
-            Algorithm algorithm = Algorithm.HMAC256(secret);
-            JWT.require(algorithm).build().verify(token);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+    public String getUserRoleFromToken(String token) {
+        Algorithm algorithm = Algorithm.HMAC256(secret);
+        return JWT.require(algorithm)
+                .build()
+                .verify(token)
+                .getClaim("role")
+                .asString();
     }
 
     public Instant generateExpirationDate() {

@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 		info = @Info(
 				title = "Seu Cafezinho API",
 				version = "1.0",
-				description = "API REST para gerenciamento de pedidos de café."
+				description = "API REST para gerenciamento de pedidos de um café."
 		)
 )
 @SpringBootApplication
