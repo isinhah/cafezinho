@@ -8,7 +8,7 @@ import com.seucafezinho.api_seu_cafezinho.repository.OrderItemRepository;
 import com.seucafezinho.api_seu_cafezinho.repository.OrderRepository;
 import com.seucafezinho.api_seu_cafezinho.repository.UserRepository;
 import com.seucafezinho.api_seu_cafezinho.service.OrderService;
-import com.seucafezinho.api_seu_cafezinho.util.OrderFactory;
+import com.seucafezinho.api_seu_cafezinho.factory.OrderFactory;
 import com.seucafezinho.api_seu_cafezinho.web.dto.request.OrderRequestDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.request.OrderStatusUpdateDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.response.OrderResponseDto;
@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-import static com.seucafezinho.api_seu_cafezinho.util.SecurityUtil.validateOwnership;
+import static com.seucafezinho.api_seu_cafezinho.security.SecurityValidator.validateUserAccess;
 
 @RequiredArgsConstructor
 @Service
@@ -37,7 +37,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(readOnly = true)
     public OrderResponseDto findById(UUID orderId) {
         Order order = findOrderById(orderId);
-        validateOwnership(order.getUser().getId());
+        validateUserAccess(order.getUser().getId());
         return OrderMapper.INSTANCE.toDto(order);
     }
 
@@ -49,14 +49,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional(readOnly = true)
     public Page<OrderResponseDto> findAllByUserId(UUID userId, Pageable pageable) {
-        validateOwnership(userId);
+        validateUserAccess(userId);
         return orderRepository.findAllByUserId(userId, pageable)
                 .map(OrderMapper.INSTANCE::toDto);
     }
 
     @Transactional
     public OrderResponseDto createOrder(UUID userId, OrderRequestDto orderRequestDto) {
-        validateOwnership(userId);
+        validateUserAccess(userId);
         User user = findUserById(userId);
 
         Order order = orderFactory.createOrder(user, orderRequestDto);
@@ -73,7 +73,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderResponseDto updateOrder(UUID orderId, OrderRequestDto orderRequestDto) {
         Order order = findOrderById(orderId);
-        validateOwnership(order.getUser().getId());
+        validateUserAccess(order.getUser().getId());
 
         orderFactory.updateOrder(order, orderRequestDto);
         order.calculateTotalPrice();
@@ -110,7 +110,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void delete(UUID orderId) {
         Order order = findOrderById(orderId);
-        validateOwnership(order.getUser().getId());
+        validateUserAccess(order.getUser().getId());
         orderRepository.delete(order);
     }
 

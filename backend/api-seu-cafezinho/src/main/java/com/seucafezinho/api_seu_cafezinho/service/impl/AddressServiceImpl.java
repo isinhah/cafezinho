@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-import static com.seucafezinho.api_seu_cafezinho.util.SecurityUtil.validateOwnership;
+import static com.seucafezinho.api_seu_cafezinho.security.SecurityValidator.validateUserAccess;
 
 @RequiredArgsConstructor
 @Service
@@ -30,20 +30,20 @@ public class AddressServiceImpl implements AddressService {
     @Transactional(readOnly = true)
     public AddressResponseDto findById(UUID addressId) {
         Address address = findAddressById(addressId);
-        validateOwnership(address.getUser().getId());
+        validateUserAccess(address.getUser().getId());
         return AddressMapper.INSTANCE.toDto(address);
     }
 
     @Transactional(readOnly = true)
     public Page<AddressResponseDto> findAllByUser(UUID userId, Pageable pageable) {
-        validateOwnership(userId);
+        validateUserAccess(userId);
         return addressRepository.findAllByUserId(userId, pageable)
                 .map(AddressMapper.INSTANCE::toDto);
     }
 
     @Transactional
     public AddressResponseDto create(AddressRequestDto createDto, UUID userId) {
-        validateOwnership(userId);
+        validateUserAccess(userId);
         User user = findUserById(userId);
 
         if (addressRepository.existsByUserIdAndStreetIgnoreCase(userId, createDto.getStreet())) {
@@ -60,7 +60,7 @@ public class AddressServiceImpl implements AddressService {
     @Transactional
     public AddressResponseDto update(UUID addressId, AddressRequestDto updateDto) {
         Address existingAddress = findAddressById(addressId);
-        validateOwnership(existingAddress.getUser().getId());
+        validateUserAccess(existingAddress.getUser().getId());
 
         if (!existingAddress.getStreet().equalsIgnoreCase(updateDto.getStreet()) &&
                 addressRepository.existsByUserIdAndStreetIgnoreCase(existingAddress.getUser().getId(), updateDto.getStreet())) {
@@ -77,7 +77,7 @@ public class AddressServiceImpl implements AddressService {
     @Transactional
     public void delete(UUID addressId) {
         Address address = findAddressById(addressId);
-        validateOwnership(address.getUser().getId());
+        validateUserAccess(address.getUser().getId());
         addressRepository.delete(address);
     }
 

@@ -7,7 +7,7 @@ import com.seucafezinho.api_seu_cafezinho.repository.OrderRepository;
 import com.seucafezinho.api_seu_cafezinho.repository.UserRepository;
 import com.seucafezinho.api_seu_cafezinho.service.impl.OrderServiceImpl;
 import com.seucafezinho.api_seu_cafezinho.util.OrderConstants;
-import com.seucafezinho.api_seu_cafezinho.util.OrderFactory;
+import com.seucafezinho.api_seu_cafezinho.factory.OrderFactory;
 import com.seucafezinho.api_seu_cafezinho.util.SecurityContextTestUtil;
 import com.seucafezinho.api_seu_cafezinho.web.dto.response.OrderResponseDto;
 import org.junit.jupiter.api.AfterEach;

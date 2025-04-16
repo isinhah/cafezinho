@@ -1,4 +1,4 @@
-package com.seucafezinho.api_seu_cafezinho.util;
+package com.seucafezinho.api_seu_cafezinho.factory;
 
 import com.seucafezinho.api_seu_cafezinho.entity.*;
 import com.seucafezinho.api_seu_cafezinho.entity.enums.DeliveryMethod;

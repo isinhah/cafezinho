@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-import static com.seucafezinho.api_seu_cafezinho.util.SecurityUtil.validateOwnership;
+import static com.seucafezinho.api_seu_cafezinho.security.SecurityValidator.validateUserAccess;
 
 @RequiredArgsConstructor
 @Service
@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(readOnly = true)
     public UserResponseDto findById(UUID id) {
-        validateOwnership(id);
+        validateUserAccess(id);
         User user = findUserById(id);
         return UserMapper.INSTANCE.toDto(user);
     }
@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public UserResponseDto update(UUID id, UserRequestDto updateDto) {
-        validateOwnership(id);
+        validateUserAccess(id);
         User existingUser = findUserById(id);
 
         updateDto.setPassword(passwordEncoder.encode(updateDto.getPassword()));
@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public void delete(UUID id) {
-        validateOwnership(id);
+        validateUserAccess(id);
         User user = findUserById(id);
         userRepository.delete(user);
     }
