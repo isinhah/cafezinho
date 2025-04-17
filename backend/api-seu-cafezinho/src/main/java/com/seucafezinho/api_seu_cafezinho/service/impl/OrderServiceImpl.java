@@ -22,8 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-import static com.seucafezinho.api_seu_cafezinho.security.SecurityValidator.validateUserAccess;
-
 @RequiredArgsConstructor
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -37,7 +35,6 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(readOnly = true)
     public OrderResponseDto findById(UUID orderId) {
         Order order = findOrderById(orderId);
-        validateUserAccess(order.getUser().getId());
         return OrderMapper.INSTANCE.toDto(order);
     }
 
@@ -49,14 +46,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional(readOnly = true)
     public Page<OrderResponseDto> findAllByUserId(UUID userId, Pageable pageable) {
-        validateUserAccess(userId);
         return orderRepository.findAllByUserId(userId, pageable)
                 .map(OrderMapper.INSTANCE::toDto);
     }
 
     @Transactional
     public OrderResponseDto createOrder(UUID userId, OrderRequestDto orderRequestDto) {
-        validateUserAccess(userId);
         User user = findUserById(userId);
 
         Order order = orderFactory.createOrder(user, orderRequestDto);
@@ -73,7 +68,6 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderResponseDto updateOrder(UUID orderId, OrderRequestDto orderRequestDto) {
         Order order = findOrderById(orderId);
-        validateUserAccess(order.getUser().getId());
 
         orderFactory.updateOrder(order, orderRequestDto);
         order.calculateTotalPrice();
@@ -110,7 +104,6 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void delete(UUID orderId) {
         Order order = findOrderById(orderId);
-        validateUserAccess(order.getUser().getId());
         orderRepository.delete(order);
     }
 

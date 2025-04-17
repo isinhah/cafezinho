@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +28,7 @@ public class UserController implements UserControllerDocs {
 
     private final UserService userService;
 
+    @PreAuthorize("#id == authentication.principal or hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDto> getUserById(@PathVariable UUID id) {
         UserResponseDto response = userService.findById(id);
@@ -39,6 +41,7 @@ public class UserController implements UserControllerDocs {
         return ResponseEntity.ok(new CustomPageResponse<>(page));
     }
 
+    @PreAuthorize("#id == authentication.principal or hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDto> alterUser(
             @PathVariable UUID id,
@@ -47,6 +50,7 @@ public class UserController implements UserControllerDocs {
         return ResponseEntity.ok(existingUser);
     }
 
+    @PreAuthorize("#id == authentication.principal or hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
         userService.delete(id);

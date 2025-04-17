@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -43,6 +44,7 @@ public class OrderController implements OrderControllerDocs {
         return ResponseEntity.ok(new CustomPageResponse<>(page));
     }
 
+    @PreAuthorize("#userId == authentication.principal or hasRole('ADMIN')")
     @GetMapping("/user/{userId}")
     public ResponseEntity<CustomPageResponse<OrderResponseDto>> getAllOrdersByUser(
             @PathVariable UUID userId, Pageable pageable) {
@@ -50,6 +52,7 @@ public class OrderController implements OrderControllerDocs {
         return ResponseEntity.ok(new CustomPageResponse<>(page));
     }
 
+    @PreAuthorize("#userId == authentication.principal")
     @PostMapping("/{userId}")
     public ResponseEntity<OrderResponseDto> createOrder(
             @PathVariable UUID userId,
