@@ -77,16 +77,12 @@ public class AddressServiceImpl implements AddressService {
     @Transactional(readOnly = true)
     public Address findAddressById(UUID addressId) {
         return addressRepository.findById(addressId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Address with id: '%s' not found", addressId)
-                ));
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Address with id: '%s' not found", addressId)));
     }
 
     @Transactional(readOnly = true)
     public User findUserById(UUID userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("User with id: '%s' not found", userId)
-                ));
+                .orElseThrow(() -> new EntityNotFoundException(String.format("User with id: '%s' not found", userId)));
     }
 }

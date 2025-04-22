@@ -85,16 +85,12 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(readOnly = true)
     public Product findProductById(Long productId) {
         return productRepository.findById(productId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Product with id: '%s' not found", productId)
-                ));
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Product with id: '%s' not found", productId)));
     }
 
     @Transactional(readOnly = true)
     private Category findCategoryById(Long categoryId) {
         return categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Category with id: '%s' not found", categoryId)
-                ));
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Category with id: '%s' not found", categoryId)));
     }
 }

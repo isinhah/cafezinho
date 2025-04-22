@@ -8,6 +8,7 @@ import com.seucafezinho.api_seu_cafezinho.web.dto.request.LoginRequestDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.request.UserRequestDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.response.TokenResponseDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.response.UserResponseDto;
+import com.seucafezinho.api_seu_cafezinho.web.exception.InvalidPasswordException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,7 +37,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         User user = userService.findByEmail(dto.getEmail());
 
         if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid password");
+            throw new InvalidPasswordException("Invalid password");
         }
 
         String token = tokenService.generateToken(user);

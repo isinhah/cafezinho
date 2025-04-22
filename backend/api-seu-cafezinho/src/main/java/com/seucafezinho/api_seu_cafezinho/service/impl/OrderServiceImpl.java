@@ -12,6 +12,7 @@ import com.seucafezinho.api_seu_cafezinho.factory.OrderFactory;
 import com.seucafezinho.api_seu_cafezinho.web.dto.request.OrderRequestDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.request.OrderStatusUpdateDto;
 import com.seucafezinho.api_seu_cafezinho.web.dto.response.OrderResponseDto;
+import com.seucafezinho.api_seu_cafezinho.web.exception.InvalidOrderException;
 import com.seucafezinho.api_seu_cafezinho.web.mapper.OrderMapper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -86,11 +87,11 @@ public class OrderServiceImpl implements OrderService {
         OrderStatus newStatus = OrderStatus.valueOf(statusUpdateDto.getStatus());
 
         if (newStatus == OrderStatus.DELIVERING && order.getAddress() == null) {
-            throw new IllegalStateException("Cannot set status to DELIVERING for orders without an address. The customer must pick up the order.");
+            throw new InvalidOrderException("Cannot set status to DELIVERING for orders without an address. The customer must pick up the order.");
         }
 
         if (newStatus == OrderStatus.READY_FOR_PICKUP && order.getAddress() != null) {
-            throw new IllegalStateException("Order can only be marked as READY_FOR_PICKUP if no delivery address is set.");
+            throw new InvalidOrderException("Order can only be marked as READY_FOR_PICKUP if no delivery address is set.");
         }
 
         order.setStatus(newStatus);
@@ -109,9 +110,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional(readOnly = true)
     private Order findOrderById(UUID orderId) {
-        return orderRepository.findById(orderId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("Order with id: '%s' not found", orderId)));
+        return orderRepository.findById(orderId).orElseThrow(
+                () -> new EntityNotFoundException(String.format("Order with id: '%s' not found", orderId)));
     }
 
     @Transactional(readOnly = true)

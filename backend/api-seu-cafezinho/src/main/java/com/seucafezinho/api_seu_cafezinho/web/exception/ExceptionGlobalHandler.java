@@ -38,7 +38,7 @@ public class ExceptionGlobalHandler {
                 .body(new ErrorMessage(
                         request,
                         HttpStatus.BAD_REQUEST,
-                        "Unique constraint violation: " + ex.getMessage()));
+                        ex.getMessage()));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -54,9 +54,22 @@ public class ExceptionGlobalHandler {
                         "Invalid argument: " + ex.getMessage()));
     }
 
-    @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<ErrorMessage> businessException(RuntimeException ex,
-                                                                HttpServletRequest request) {
+    @ExceptionHandler(InvalidPasswordException.class)
+    public ResponseEntity<ErrorMessage> invalidPasswordException(InvalidPasswordException ex,
+                                                                 HttpServletRequest request) {
+        log.error("------ Api Error ------", ex);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(
+                        request,
+                        HttpStatus.BAD_REQUEST,
+                        ex.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidOrderException.class)
+    public ResponseEntity<ErrorMessage> invalidOrderException(InvalidOrderException ex,
+                                                                 HttpServletRequest request) {
         log.error("------ Api Error ------", ex);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
